@@ -1,0 +1,9 @@
+version: '3.9'
+
+services:
+    patient-service:
+        build:
+            context: .
+            dockerfile: Backend/MS-API/Dockerfile
+        ports:
+            - "8082:8080"

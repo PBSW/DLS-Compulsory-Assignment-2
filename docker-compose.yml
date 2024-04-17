@@ -4,14 +4,13 @@ services:
     patient-service:
         build:
             context: .
-            dockerfile:
+            dockerfile: Backend/PS-API/Dockerfile
         ports:
             - "8082:8080"
-    
+            
     measurement-service:
         build:
             context: .
-            dockerfile:
+            dockerfile: Backend/MS-API/Dockerfile
         ports:
             - "8083:8080"
-            
