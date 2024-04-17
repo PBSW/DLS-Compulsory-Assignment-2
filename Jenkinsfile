@@ -2,10 +2,6 @@ pipeline {
     agent any
 
     stages {
-        stage('Pull') {
-            steps {
-                echo 'Building..'
-            }
         }
         stage('Build') {
             steps {
