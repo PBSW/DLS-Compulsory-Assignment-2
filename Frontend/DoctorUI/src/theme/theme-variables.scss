@@ -3,7 +3,7 @@
  */
 
 // Set Font Awesome font path
-$fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
+$fa-font-path: "node_modules/@fortawesome/fontawesome-free/webfonts";
 
 // ---------------------------------------------------------------------------
 // Bootstrap variables
@@ -51,5 +51,5 @@ $theme-colors: (
 
 // Use Bootstrap defaults for other variables, imported here so we can access all app variables in one place when used
 // in components.
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
+@import "node_modules/bootstrap/scss/functions";
+@import "node_modules/bootstrap/scss/variables";

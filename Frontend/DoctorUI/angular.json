@@ -79,10 +79,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "doctor-ui:build:production"
+              "buildTarget": "doctor-ui:build:production"
             },
             "development": {
-              "browserTarget": "doctor-ui:build:development"
+              "buildTarget": "doctor-ui:build:development"
             },
             "ci": {
               "progress": false
@@ -93,7 +93,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "doctor-ui:build"
+            "buildTarget": "doctor-ui:build"
           }
         },
         "test": {
