@@ -1,0 +1,36 @@
+﻿{
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/measurement",
+      "UpstreamHttpMethod": [
+        "Post",
+        "Get",
+        "Put"
+      ],
+      "DownstreamPathTemplate": "/measurement",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "measurement-service",
+          "Port": 8080
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/patient",
+      "UpstreamHttpMethod": [
+        "Post",
+        "Get",
+        "Delete"
+      ],
+      "DownstreamPathTemplate": "/patient",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "measurement-service",
+          "Port": 8080
+        }
+      ]
+    }
+  ] 
+}
