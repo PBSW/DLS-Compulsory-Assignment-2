@@ -4,17 +4,17 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Building...'
+                sh 'docker compose build'
             }
         }
         stage('Run') {
             steps {
-                echo 'Building...'
+                echo 'docker compose run'
             }
         }  
         stage('Test') {
             steps {
-                echo 'Testing..'
+                echo 'docker compose test'
             }
         }
         stage('Deploy') {
