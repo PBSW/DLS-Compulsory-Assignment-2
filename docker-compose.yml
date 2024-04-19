@@ -14,3 +14,31 @@ services:
             dockerfile: Backend/MS-API/Dockerfile
         ports:
             - "8083:8080"
+    gateway:
+        build:
+            context: .
+            dockerfile: Backend/Gateway/Dockerfile
+        ports:
+            - "8081:8080"
+    
+    doctor-ui:
+        build:
+            context: Frontend/DoctorUI/
+            dockerfile: Dockerfile
+        environment:
+            - NODE_ENV=production
+        ports:
+            - "4201:4200"
+        command: [ "ng", "serve", "--host", "0.0.0.0" ]
+            
+    
+    patient-ui:
+        build:
+            context: Frontend/PatientUI/
+            dockerfile: Dockerfile
+        environment:
+            - NODE_ENV=production
+        ports:
+            - "4202:4200"
+        command: [ "ng", "serve", "--host", "0.0.0.0" ]
+            
