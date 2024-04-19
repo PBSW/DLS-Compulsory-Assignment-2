@@ -14,3 +14,24 @@ services:
             dockerfile: Backend/MS-API/Dockerfile
         ports:
             - "8083:8080"
+    gateway:
+        build:
+            context: .
+            dockerfile: Backend/Gateway/Dockerfile
+        ports:
+            - "8081:8080"
+    
+    doctor-ui:
+        build:
+            context: .
+            dockerfile: Frontend/DoctorUI/Dockerfile
+        ports:
+            - "4201:4200"
+    
+    patient-ui:
+        build:
+            context: .
+            dockerfile: Frontend/PatientUI/Dockerfile
+        ports:
+            - "4202:4200"
+            
