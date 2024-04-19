@@ -23,15 +23,22 @@ services:
     
     doctor-ui:
         build:
-            context: .
-            dockerfile: Frontend/DoctorUI/Dockerfile
+            context: Frontend/DoctorUI/
+            dockerfile: Dockerfile
+        environment:
+            - NODE_ENV=production
         ports:
             - "4201:4200"
+        command: [ "ng", "serve", "--host", "0.0.0.0" ]
+            
     
     patient-ui:
         build:
-            context: .
-            dockerfile: Frontend/PatientUI/Dockerfile
+            context: Frontend/PatientUI/
+            dockerfile: Dockerfile
+        environment:
+            - NODE_ENV=production
         ports:
             - "4202:4200"
+        command: [ "ng", "serve", "--host", "0.0.0.0" ]
             
