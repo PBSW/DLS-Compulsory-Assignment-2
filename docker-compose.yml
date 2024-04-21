@@ -5,7 +5,7 @@ services:
         build:
             context: .
             dockerfile: Backend/Gateway/Dockerfile
-        image: easv/DLS/Assignment2/gateway
+        image: easv/dls/Assignment2/gateway
         ports:
             - "8081:8080"
     
@@ -13,7 +13,7 @@ services:
         build:
             context: .
             dockerfile: Backend/PS-API/Dockerfile
-        image: easv/DLS/Assignment2/patient-service
+        image: easv/dls/Assignment2/patient-service
         ports:
             - "8082:8080"
         depends_on: 
@@ -23,7 +23,7 @@ services:
         build:
             context: .
             dockerfile: Backend/MS-API/Dockerfile
-        image: easv/DLS/Assignment2/measurement-service
+        image: easv/dls/Assignment2/measurement-service
         ports:
             - "8083:8080"
         depends_on:
@@ -35,7 +35,7 @@ services:
             dockerfile: Dockerfile
         environment:
             - NODE_ENV=production
-        image: easv/DLS/Assignment2/doctor-ui
+        image: easv/dls/Assignment2/doctor-ui
         ports:
             - "4201:4200"
         command: [ "ng", "serve", "--host", "0.0.0.0" ]
@@ -47,7 +47,7 @@ services:
             dockerfile: Dockerfile
         environment:
             - NODE_ENV=production
-        image: easv/DLS/Assignment2/patient-ui
+        image: easv/dls/Assignment2/patient-ui
         ports:
             - "4202:4200"
         command: [ "ng", "serve", "--host", "0.0.0.0" ]
