@@ -17,9 +17,11 @@ pipeline {
                 echo 'docker compose test'
             }
         }
-        stage('Deploy') {
+        stage('Deliver') {
             steps {
-                echo 'Deploying....'
+                withCredentials([usernamePassword(credentialsId: 'e96d1be8-f79f-416b-871d-799c2b5eaa6c', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+                sh 'docker compose push'
             }
         }
     }

@@ -1,25 +1,30 @@
 version: '3.9'
 
 services:
-    patient-service:
-        build:
-            context: .
-            dockerfile: Backend/PS-API/Dockerfile
-        ports:
-            - "8082:8080"
-            
-    measurement-service:
-        build:
-            context: .
-            dockerfile: Backend/MS-API/Dockerfile
-        ports:
-            - "8083:8080"
     gateway:
         build:
             context: .
             dockerfile: Backend/Gateway/Dockerfile
         ports:
             - "8081:8080"
+    
+    patient-service:
+        build:
+            context: .
+            dockerfile: Backend/PS-API/Dockerfile
+        ports:
+            - "8082:8080"
+        depends_on: 
+            - gateway
+    
+    measurement-service:
+        build:
+            context: .
+            dockerfile: Backend/MS-API/Dockerfile
+        ports:
+            - "8083:8080"
+        depends_on:
+            - gateway
     
     doctor-ui:
         build:
@@ -41,4 +46,3 @@ services:
         ports:
             - "4202:4200"
         command: [ "ng", "serve", "--host", "0.0.0.0" ]
-            
