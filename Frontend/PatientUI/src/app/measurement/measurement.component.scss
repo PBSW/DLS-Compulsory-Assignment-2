@@ -1,0 +1,55 @@
+@use '../../theme/theme-variables' as *;
+
+$underline-color: map-get($map: $theme-colors, $key: 'light');
+
+
+.underlined-input {
+  border: none;
+  border-bottom: 2px solid $underline-color;
+  background-color: transparent;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  font-size: 1.5rem;
+  color: $underline-color;
+  text-align: center;
+  outline: none;
+  transition: border-bottom 0.3s;
+}
+
+.underlined-input:active {
+  border-bottom: 2px solid #f00;
+}
+
+.unbder
+
+.input-field::placeholder {
+  color: $underline-color;
+}
+
+.input-field {
+  background-color: transparent;
+  border: none;
+  font-size: 1.2rem;
+}
+
+
+.align-text-end {
+  text-align: end;
+}
+
+.align-text-center {
+  text-align: center;
+}
+
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+    -moz-appearance:textfield; /* Firefox */
+}
