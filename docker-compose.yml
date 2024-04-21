@@ -1,16 +1,53 @@
 version: '3.9'
 
 services:
+    gateway:
+        build:
+            context: .
+            dockerfile: Backend/Gateway/Dockerfile
+        image: philipezadeh/dls-assignment-2-gateway
+        ports:
+            - "8081:8080"
+    
     patient-service:
         build:
             context: .
             dockerfile: Backend/PS-API/Dockerfile
+        image: philipezadeh/dls-assignment-2-patient-service
         ports:
             - "8082:8080"
-            
+        depends_on: 
+            - gateway
+    
     measurement-service:
         build:
             context: .
             dockerfile: Backend/MS-API/Dockerfile
+        image: philipezadeh/dls-assignment-2-measurement-service
         ports:
             - "8083:8080"
+        depends_on:
+            - gateway
+    
+    doctor-ui:
+        build:
+            context: Frontend/DoctorUI/
+            dockerfile: Dockerfile
+        environment:
+            - NODE_ENV=production
+        image: philipezadeh/dls-assignment-2-doctor-ui
+        ports:
+            - "4201:4200"
+        command: [ "ng", "serve", "--host", "0.0.0.0" ]
+            
+    
+    patient-ui:
+        build:
+            context: Frontend/PatientUI/
+            dockerfile: Dockerfile
+        environment:
+            - NODE_ENV=production
+        image: philipezadeh/dls-assignment-2-patient-ui
+        ports:
+            - "4202:4200"
+        command: [ "ng", "serve", "--host", "0.0.0.0" ]

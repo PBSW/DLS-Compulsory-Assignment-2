@@ -4,22 +4,26 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Building...'
+                sh 'docker compose build'
             }
         }
         stage('Run') {
             steps {
-                echo 'Building...'
+                echo 'docker compose up -d'
             }
         }  
         stage('Test') {
             steps {
-                echo 'Testing..'
+                echo 'docker compose test'
             }
         }
-        stage('Deploy') {
+        stage('Deliver') {
             steps {
-                echo 'Deploying....'
+                withCredentials([usernamePassword(credentialsId: 'Dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) 
+                {
+                sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+                sh 'docker compose push'
+                }
             }
         }
     }
