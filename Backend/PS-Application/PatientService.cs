@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using PS_Application.Interfaces;
-using PS_Infrastructure.Interfaces;
+using Shared;
 
 namespace PS_Application;
 

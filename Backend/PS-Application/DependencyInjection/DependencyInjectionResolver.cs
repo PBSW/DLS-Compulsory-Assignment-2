@@ -7,6 +7,8 @@ public class DependencyInjectionResolver
 {
     public static void RegisterServiceLayer(IServiceCollection services)
     {
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        
         services.AddScoped<IPatientService, PatientService>();
     }
 }

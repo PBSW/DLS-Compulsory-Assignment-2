@@ -1,4 +1,4 @@
-﻿namespace PS_Infrastructure.Interfaces;
+﻿namespace PS_Application.Interfaces;
 
 public interface IPatientRepository
 {
