@@ -56,9 +56,9 @@ public class PatientServiceTests
         var service = setup.CreateService();
         
         var patient = new Patient();
-        setup.GetMockRepo().Setup(x => x.CreatePatient(patient)).ReturnsAsync(true);
+        setup.GetMockRepo().Setup(x => x.CreatePatientSync(patient)).ReturnsAsync(true);
         
-        var result = service.CreatePatient(patient).Result;
+        var result = service.CreatePatientAsync(patient).Result;
         
         result.Should().BeTrue();
     }
@@ -68,8 +68,8 @@ public class PatientServiceTests
     {
         var setup = CreateServiceSetup();
         var service = setup.CreateService();
-        
-        Action action = () => service.CreatePatient(null);
+
+        Action action = () => service.CreatePatientAsync(null);
         
         action.Should().Throw<ValidationException>().WithMessage("Patient cannot be null");
     }
@@ -81,9 +81,9 @@ public class PatientServiceTests
         var service = setup.CreateService();
         
         var patient = new Patient();
-        setup.GetMockRepo().Setup(x => x.CreatePatient(patient)).ReturnsAsync(false);
+        setup.GetMockRepo().Setup(x => x.CreatePatientSync(patient)).ReturnsAsync(false);
         
-        Action action = () => service.CreatePatient(patient);
+        Action action = () => service.CreatePatientSync(patient);
         
         action.Should().Throw<ValidationException>().WithMessage("Patient is invalid");
     }
@@ -104,7 +104,7 @@ public class PatientServiceTests
             Ssn = "123456789"
         };
         
-        Action action = () => service.CreatePatient(patient);
+        Action action = () => service.CreatePatientSync(patient);
         
         action.Should().Throw<ValidationException>().WithMessage("Patient name is invalid");
     }
@@ -125,7 +125,7 @@ public class PatientServiceTests
             Ssn = "123456789"
         };
         
-        Action action = () => service.CreatePatient(patient);
+        Action action = () => service.CreatePatientSync(patient);
 
         action.Should().Throw<ValidationException>().WithMessage("Patient mail is invalid");
     }
@@ -146,7 +146,7 @@ public class PatientServiceTests
             Ssn = ssn
         };
         
-        Action action = () => service.CreatePatient(patient);
+        Action action = () => service.CreatePatientSync(patient);
         
         action.Should().Throw<ValidationException>().WithMessage("Patient ssn is invalid");
     }
@@ -159,11 +159,11 @@ public class PatientServiceTests
         var service = setup.CreateService();
         
         var patient = new Patient();
-        setup.GetMockRepo().Setup(x => x.CreatePatient(patient)).ReturnsAsync(true);
+        setup.GetMockRepo().Setup(x => x.CreatePatientSync(patient)).ReturnsAsync(true);
         
-        service.CreatePatient(patient).Wait();
+        service.CreatePatientSync(patient).Wait();
         
-        setup.GetMockRepo().Verify(x => x.CreatePatient(patient), Times.Once);
+        setup.GetMockRepo().Verify(x => x.CreatePatientSync(patient), Times.Once);
     }
     
     // Helper Methods
