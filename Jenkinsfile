@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    
+
     stages {
         stage('Unit tests') {
             steps {
