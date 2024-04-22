@@ -9,6 +9,7 @@ using Shared;
 using Shared.DTOs.Requests;
 using Shared.DTOs.Response;
 using Shared.Helpers.Mapper;
+using Xunit.Sdk;
 
 namespace PS_Tests.UnitTests;
 
@@ -62,18 +63,18 @@ public class PatientServiceTests
         var patient = new Patient()
         {
             Name = "Test",
-            Mail = "Test@Mail.com",
-            Ssn = "123456789"
+            Mail = "testing@example.com",
+            Ssn = "0123456789"
         };
         
         var patientCreate = new PatientCreate()
         {
             Name = "Test",
-            Mail = "Test@Mail.com",
-            Ssn = "123456789"
+            Mail = "testing@example.com",
+            Ssn = "0123456789"
         };
         
-        setup.GetMockRepo().Setup(x => x.CreatePatientAsync(patient)).ReturnsAsync(1);
+        setup.GetMockRepo().Setup(x => x.CreatePatientAsync(patient)).ReturnsAsync(patient);
         
         // Act
         var action = () => service.CreatePatientAsync(patientCreate).Result;
@@ -83,7 +84,7 @@ public class PatientServiceTests
     }
     
     [Fact]
-    public async void CreatePatient_WithNullPatient_ShouldThrowValidationExceptionWithMessage()
+    public async void CreatePatient_WithNullPatientCreate_ShouldThrowNullExceptionWithMessage()
     {
         // Setup
         var setup = CreateServiceSetup();
@@ -93,14 +94,14 @@ public class PatientServiceTests
         Func<Task> action = () => service.CreatePatientAsync(null);
         
         // Assert
-        await action.Should().ThrowAsync<ValidationException>().WithMessage("Patient cannot be null");
+        await action.Should().ThrowAsync<NullReferenceException>().WithMessage("PatientCreate is null");
     }
     
     [Theory]
-    [InlineData("")]
-    [InlineData(" ")]
-    [InlineData(null)]
-    public async void CreatePatient_WithInvalidPatientName_ShouldThrowValidationExceptionWithMessage(string name)
+    [InlineData("", "Name is required")]
+    [InlineData(" ", "Name is required")]
+    [InlineData(null, "Name is null")]
+    public async void CreatePatient_WithInvalidPatientName_ShouldThrowValidationExceptionWithMessage(string name, string errorMessage)
     {
         // Setup
         var setup = CreateServiceSetup();
@@ -117,14 +118,16 @@ public class PatientServiceTests
         Func<Task> action = () => service.CreatePatientAsync(patient);
         
         // Assert
-        await action.Should().ThrowAsync<ValidationException>().WithMessage("Patient name is invalid");
+        await action.Should().ThrowAsync<ValidationException>().WithMessage(errorMessage);
     }
 
     [Theory]
-    [InlineData("")]
-    [InlineData(" ")]
-    [InlineData(null)]
-    public async Task CreatePatient_WithInvalidPatientMail_ShouldThrowValidationExceptionWithMessage(string mail)
+    [InlineData("", "Mail is required")]
+    [InlineData(" ", "Mail is required")]
+    [InlineData(null, "Mail is null")]
+    [InlineData("awdawdlkdaw", "Incorrect Mail formatting")]
+    [InlineData("thisshouldbeanextremelylongemailthatgoesoverthelimitofcharactersavailablefortheemailexample@example.com", "Mail cannot be longer than 128 characters")]
+    public async Task CreatePatient_WithInvalidPatientMail_ShouldThrowValidationExceptionWithMessage(string mail, string errorMessage)
     {
         // Setup
         var setup = CreateServiceSetup();
@@ -141,14 +144,16 @@ public class PatientServiceTests
         Func<Task> action = () => service.CreatePatientAsync(patient);
 
         // Assert
-        await action.Should().ThrowAsync<ValidationException>().WithMessage("Patient mail is invalid");
+        await action.Should().ThrowAsync<ValidationException>().WithMessage(errorMessage);
     }
     
     [Theory]
-    [InlineData("")]
-    [InlineData(" ")]
-    [InlineData(null)]
-    public async void CreatePatient_WithInvalidPatientSsn_ShouldThrowValidationExceptionWithMessage(string ssn)
+    [InlineData(null, "SSN is null")]
+    [InlineData("", "SSN is required")]
+    [InlineData(" ", "SSN is required")]
+    [InlineData("12345678901", "SSN may not be longer than 10 numbers")]
+    [InlineData("awdawds", "SSN may only contain numbers")]
+    public async void CreatePatient_WithInvalidPatientSsn_ShouldThrowValidationExceptionWithMessage(string ssn, string errorMessage)
     {
         // Setup
         var setup = CreateServiceSetup();
@@ -157,7 +162,7 @@ public class PatientServiceTests
         var patient = new PatientCreate()
         {
             Name = "Test",
-            Mail = "Test@Mail.com",
+            Mail = "testing@example.com",
             Ssn = ssn
         };
         
@@ -165,7 +170,7 @@ public class PatientServiceTests
         Func<Task> action = () => service.CreatePatientAsync(patient);
         
         // Assert
-        await action.Should().ThrowAsync<ValidationException>().WithMessage("Patient SS is invalid");
+        await action.Should().ThrowAsync<ValidationException>().WithMessage(errorMessage);
     }
     
     // Helper Classes and Methods

@@ -1,4 +1,5 @@
-﻿using PS_Application.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using PS_Application.Interfaces;
 using Shared;
 using Shared.Monitoring;
 
@@ -20,15 +21,22 @@ public class PatientRepository : IPatientRepository
     }
 
 
-    public async Task<int> CreatePatientAsync(Patient patient)
+    public async Task<Patient> CreatePatientAsync(Patient patient)
     {
         // Monitoring and Logging
         using var activity = Monitoring.ActivitySource.StartActivity("CreatePatientAsync");
         Monitoring.Log.Debug("Creating Patient in Database");
-        
-        var entity = await _dbcontext.Patients.AddAsync(patient);
-        var change = await _dbcontext.SaveChangesAsync();
+    
+        // Check if the SSN already exists
+        var existingPatient = await _dbcontext.Patients.FirstOrDefaultAsync(p => p.Ssn == patient.Ssn);
+        if (existingPatient != null)
+        {
+            throw new Exception("A patient with the same SSN already exists");
+        }
 
-        return change;
+        var entityEntry = await _dbcontext.Patients.AddAsync(patient);
+        await _dbcontext.SaveChangesAsync();
+
+        return entityEntry.Entity; // Access the Entity property to get the added patient entity
     }
 }

@@ -30,21 +30,21 @@ public class PatientService : IPatientService
         
         if (request == null)
         {
-            throw new ArgumentNullException("PatientCreate request is null");
+            throw new NullReferenceException("PatientCreate is null");
         }
         
         Patient patient = _mapper.Map<Patient>(request);
         
-        await _validator.ValidateAndThrowAsync(patient);
-        
-        int change = await _repo.CreatePatientAsync(patient);
-
-        if (change > 0)
+        var validation = await _validator.ValidateAsync(patient);
+        if (!validation.IsValid)
         {
-            throw new Exception("Patient not created");
+            Monitoring.Log.Error(validation.ToString());
+            throw new ValidationException(validation.ToString());
         }
         
-        PatientResponse response = _mapper.Map<PatientResponse>(patient);
+        Patient patientReturn = await _repo.CreatePatientAsync(patient);
+        
+        PatientResponse response = _mapper.Map<PatientResponse>(patientReturn);
 
         return response;
     }
