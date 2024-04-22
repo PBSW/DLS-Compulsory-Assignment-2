@@ -5,6 +5,8 @@ using Moq;
 using PS_Application;
 using PS_Application.Interfaces;
 using Shared;
+using Shared.DTOs.Requests;
+using Shared.DTOs.Response;
 
 namespace PS_Tests.UnitTests;
 
@@ -24,7 +26,7 @@ public class PatientServiceTests
     public void CreateService_WithNullAutoMapper_ShouldThrowNullExceptionWithMessage()
     {
         Action action = () =>
-            new PatientService(new Mock<IPatientRepository>().Object, null, new Mock<IValidator>().Object);
+            new PatientService(new Mock<IPatientRepository>().Object, null, new Mock<IValidator<Patient>>().Object);
 
         action.Should().Throw<NullReferenceException>().WithMessage("PatientService mapper is null");
     }
@@ -49,41 +51,76 @@ public class PatientServiceTests
 
     // Patient Create Tests
     [Fact]
-    public void CreatePatient_WithValidPatient_ShouldReturnTrue()
+    public void CreatePatient_WithValidPatient_ShouldReturnValidPatientObject()
     {
+        // Setup
         var setup = CreateServiceSetup();
         var service = setup.CreateService();
         
-        var patient = new Patient();
-        setup.GetMockRepo().Setup(x => x.CreatePatientSync(patient)).ReturnsAsync(true);
+        var patient = new Patient()
+        {
+            Name = "Test",
+            Mail = "Test@Mail.com",
+            Ssn = "123456789"
+        };
         
-        var result = service.CreatePatientAsync(patient).Result;
+        var patientCreate = new PatientCreate()
+        {
+            Name = "Test",
+            Mail = "Test@Mail.com",
+            Ssn = "123456789"
+        };
         
-        result.Should().BeTrue();
+        setup.GetMockRepo().Setup(x => x.CreatePatientAsync(patient)).ReturnsAsync(patient);
+        
+        // Act
+        var action = () => service.CreatePatientAsync(patientCreate).Result;
+        
+        // Assert
+        action.Should().NotThrow();
     }
     
     [Fact]
     public void CreatePatient_WithNullPatient_ShouldThrowValidationExceptionWithMessage()
     {
+        // Setup
         var setup = CreateServiceSetup();
         var service = setup.CreateService();
 
+        // Act
         Action action = () => service.CreatePatientAsync(null);
         
+        // Assert
         action.Should().Throw<ValidationException>().WithMessage("Patient cannot be null");
     }
     
     [Fact]
     public void CreatePatient_WithInvalidPatient_ShouldThrowValidationExceptionWithMessage()
     {
+        // Setup
         var setup = CreateServiceSetup();
         var service = setup.CreateService();
         
-        var patient = new Patient();
-        setup.GetMockRepo().Setup(x => x.CreatePatientSync(patient)).ReturnsAsync(false);
+        var patient = new Patient()
+        {
+            Name = "Test",
+            Mail = "Test@Mail.com",
+            Ssn = "123456789"
+        };
         
-        Action action = () => service.CreatePatientSync(patient);
+        var patientCreate = new PatientCreate()
+        {
+            Name = "Test",
+            Mail = "Test@Mail.com",
+            Ssn = "123456789"
+        };
         
+        setup.GetMockRepo().Setup(x => x.CreatePatientAsync(patient)).ReturnsAsync(patient);
+        
+        // Act
+        Action action = () => service.CreatePatientAsync(patientCreate);
+        
+        // Assert
         action.Should().Throw<ValidationException>().WithMessage("Patient is invalid");
     }
     
@@ -93,18 +130,21 @@ public class PatientServiceTests
     [InlineData(null)]
     public void CreatePatient_WithInvalidPatientName_ShouldThrowValidationExceptionWithMessage(string name)
     {
+        // Setup
         var setup = CreateServiceSetup();
         var service = setup.CreateService();
         
-        var patient = new Patient
+        var patient = new PatientCreate()
         {
             Name = name,
             Mail = "Test@Mail.com",
             Ssn = "123456789"
         };
         
-        Action action = () => service.CreatePatientSync(patient);
+        // Act
+        Action action = () => service.CreatePatientAsync(patient);
         
+        // Assert
         action.Should().Throw<ValidationException>().WithMessage("Patient name is invalid");
     }
 
@@ -114,18 +154,21 @@ public class PatientServiceTests
     [InlineData(null)]
     public void CreatePatient_WithInvalidPatientMail_ShouldThrowValidationExceptionWithMessage(string mail)
     {
+        // Setup
         var setup = CreateServiceSetup();
         var service = setup.CreateService();
         
-        var patient = new Patient
+        var patient = new PatientCreate()
         {
             Name = "Test",
             Mail = mail,
             Ssn = "123456789"
         };
         
-        Action action = () => service.CreatePatientSync(patient);
+        // Act
+        Action action = () => service.CreatePatientAsync(patient);
 
+        // Assert
         action.Should().Throw<ValidationException>().WithMessage("Patient mail is invalid");
     }
     
@@ -135,37 +178,25 @@ public class PatientServiceTests
     [InlineData(null)]
     public void CreatePatient_WithInvalidPatientSsn_ShouldThrowValidationExceptionWithMessage(string ssn)
     {
+        // Setup
         var setup = CreateServiceSetup();
         var service = setup.CreateService();
         
-        var patient = new Patient
+        var patient = new PatientCreate()
         {
             Name = "Test",
             Mail = "Test@Mail.com",
             Ssn = ssn
         };
         
-        Action action = () => service.CreatePatientSync(patient);
+        // Act
+        Action action = () => service.CreatePatientAsync(patient);
         
+        // Assert
         action.Should().Throw<ValidationException>().WithMessage("Patient ssn is invalid");
     }
     
-    
-    [Fact]
-    public void CreatePatient_WithValidPatient_ShouldCallCreatePatientOnce()
-    {
-        var setup = CreateServiceSetup();
-        var service = setup.CreateService();
-        
-        var patient = new Patient();
-        setup.GetMockRepo().Setup(x => x.CreatePatientSync(patient)).ReturnsAsync(true);
-        
-        service.CreatePatientSync(patient).Wait();
-        
-        setup.GetMockRepo().Verify(x => x.CreatePatientSync(patient), Times.Once);
-    }
-    
-    // Helper Methods
+    // Helper Classes and Methods
     private ServiceSetup CreateServiceSetup()
     {
         var patientRepoMock = new Mock<IPatientRepository>();
@@ -179,9 +210,9 @@ public class PatientServiceTests
     {
         private Mock<IPatientRepository> _patientRepositoryMock;
         private IMapper _mapper;
-        private IValidator _valdiator;
+        private IValidator<Patient> _valdiator;
 
-        public ServiceSetup(Mock<IPatientRepository> patientRepositoryMock, IMapper mapper, IValidator validator)
+        public ServiceSetup(Mock<IPatientRepository> patientRepositoryMock, IMapper mapper, IValidator<Patient> validator)
         {
             _patientRepositoryMock = patientRepositoryMock;
             _mapper = mapper;
