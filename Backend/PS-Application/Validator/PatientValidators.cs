@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
+using Shared;
 
-namespace Shared.Helpers.Validator;
+namespace PS_Application.Validator;
 
 public class PatientValidators : AbstractValidator<Patient>
 {

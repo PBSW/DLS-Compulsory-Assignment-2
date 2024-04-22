@@ -4,6 +4,7 @@ using PS_Application.Interfaces;
 using Shared;
 using Shared.DTOs.Requests;
 using Shared.DTOs.Response;
+using Shared.Monitoring;
 
 namespace PS_Application;
 
@@ -23,10 +24,26 @@ public class PatientService : IPatientService
 
     public async Task<PatientResponse> CreatePatientAsync(PatientCreate request)
     {
+        // Monitoring and Logging
+        using var activity = Monitoring.ActivitySource.StartActivity("CreatePatientAsync");
+        Monitoring.Log.Debug("Creating Patient");
+        
+        if (request == null)
+        {
+            throw new ArgumentNullException("PatientCreate request is null");
+        }
+        
         Patient patient = _mapper.Map<Patient>(request);
         
-        await _repo.CreatePatientAsync(patient);
+        await _validator.ValidateAndThrowAsync(patient);
+        
+        int change = await _repo.CreatePatientAsync(patient);
 
+        if (change > 0)
+        {
+            throw new Exception("Patient not created");
+        }
+        
         PatientResponse response = _mapper.Map<PatientResponse>(patient);
 
         return response;

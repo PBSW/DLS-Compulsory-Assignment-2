@@ -20,15 +20,15 @@ public class PatientRepository : IPatientRepository
     }
 
 
-    public async Task<Patient> CreatePatientAsync(Patient patient)
+    public async Task<int> CreatePatientAsync(Patient patient)
     {
         // Monitoring and Logging
         using var activity = Monitoring.ActivitySource.StartActivity("CreatePatientAsync");
         Monitoring.Log.Debug("Creating Patient in Database");
         
         var entity = await _dbcontext.Patients.AddAsync(patient);
-        await _dbcontext.SaveChangesAsync();
+        var change = await _dbcontext.SaveChangesAsync();
 
-        return patient;
+        return change;
     }
 }

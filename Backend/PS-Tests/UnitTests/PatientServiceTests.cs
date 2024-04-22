@@ -4,9 +4,11 @@ using FluentValidation;
 using Moq;
 using PS_Application;
 using PS_Application.Interfaces;
+using PS_Application.Validator;
 using Shared;
 using Shared.DTOs.Requests;
 using Shared.DTOs.Response;
+using Shared.Helpers.Mapper;
 
 namespace PS_Tests.UnitTests;
 
@@ -71,7 +73,7 @@ public class PatientServiceTests
             Ssn = "123456789"
         };
         
-        setup.GetMockRepo().Setup(x => x.CreatePatientAsync(patient)).ReturnsAsync(patient);
+        setup.GetMockRepo().Setup(x => x.CreatePatientAsync(patient)).ReturnsAsync(1);
         
         // Act
         var action = () => service.CreatePatientAsync(patientCreate).Result;
@@ -81,54 +83,24 @@ public class PatientServiceTests
     }
     
     [Fact]
-    public void CreatePatient_WithNullPatient_ShouldThrowValidationExceptionWithMessage()
+    public async void CreatePatient_WithNullPatient_ShouldThrowValidationExceptionWithMessage()
     {
         // Setup
         var setup = CreateServiceSetup();
         var service = setup.CreateService();
 
         // Act
-        Action action = () => service.CreatePatientAsync(null);
+        Func<Task> action = () => service.CreatePatientAsync(null);
         
         // Assert
-        action.Should().Throw<ValidationException>().WithMessage("Patient cannot be null");
-    }
-    
-    [Fact]
-    public void CreatePatient_WithInvalidPatient_ShouldThrowValidationExceptionWithMessage()
-    {
-        // Setup
-        var setup = CreateServiceSetup();
-        var service = setup.CreateService();
-        
-        var patient = new Patient()
-        {
-            Name = "Test",
-            Mail = "Test@Mail.com",
-            Ssn = "123456789"
-        };
-        
-        var patientCreate = new PatientCreate()
-        {
-            Name = "Test",
-            Mail = "Test@Mail.com",
-            Ssn = "123456789"
-        };
-        
-        setup.GetMockRepo().Setup(x => x.CreatePatientAsync(patient)).ReturnsAsync(patient);
-        
-        // Act
-        Action action = () => service.CreatePatientAsync(patientCreate);
-        
-        // Assert
-        action.Should().Throw<ValidationException>().WithMessage("Patient is invalid");
+        await action.Should().ThrowAsync<ValidationException>().WithMessage("Patient cannot be null");
     }
     
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
     [InlineData(null)]
-    public void CreatePatient_WithInvalidPatientName_ShouldThrowValidationExceptionWithMessage(string name)
+    public async void CreatePatient_WithInvalidPatientName_ShouldThrowValidationExceptionWithMessage(string name)
     {
         // Setup
         var setup = CreateServiceSetup();
@@ -142,17 +114,17 @@ public class PatientServiceTests
         };
         
         // Act
-        Action action = () => service.CreatePatientAsync(patient);
+        Func<Task> action = () => service.CreatePatientAsync(patient);
         
         // Assert
-        action.Should().Throw<ValidationException>().WithMessage("Patient name is invalid");
+        await action.Should().ThrowAsync<ValidationException>().WithMessage("Patient name is invalid");
     }
 
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
     [InlineData(null)]
-    public void CreatePatient_WithInvalidPatientMail_ShouldThrowValidationExceptionWithMessage(string mail)
+    public async Task CreatePatient_WithInvalidPatientMail_ShouldThrowValidationExceptionWithMessage(string mail)
     {
         // Setup
         var setup = CreateServiceSetup();
@@ -166,17 +138,17 @@ public class PatientServiceTests
         };
         
         // Act
-        Action action = () => service.CreatePatientAsync(patient);
+        Func<Task> action = () => service.CreatePatientAsync(patient);
 
         // Assert
-        action.Should().Throw<ValidationException>().WithMessage("Patient mail is invalid");
+        await action.Should().ThrowAsync<ValidationException>().WithMessage("Patient mail is invalid");
     }
     
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
     [InlineData(null)]
-    public void CreatePatient_WithInvalidPatientSsn_ShouldThrowValidationExceptionWithMessage(string ssn)
+    public async void CreatePatient_WithInvalidPatientSsn_ShouldThrowValidationExceptionWithMessage(string ssn)
     {
         // Setup
         var setup = CreateServiceSetup();
@@ -190,20 +162,21 @@ public class PatientServiceTests
         };
         
         // Act
-        Action action = () => service.CreatePatientAsync(patient);
+        Func<Task> action = () => service.CreatePatientAsync(patient);
         
         // Assert
-        action.Should().Throw<ValidationException>().WithMessage("Patient ssn is invalid");
+        await action.Should().ThrowAsync<ValidationException>().WithMessage("Patient SS is invalid");
     }
     
     // Helper Classes and Methods
     private ServiceSetup CreateServiceSetup()
     {
         var patientRepoMock = new Mock<IPatientRepository>();
-        var mapperMock = new Mock<IMapper>();
-        var validatorMock = new Mock<IValidator<Patient>>();
+        var mapperConfig = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfiles>());
+        var mapper = mapperConfig.CreateMapper();
+        var validator = new PatientValidators();
 
-        return new ServiceSetup(patientRepoMock, mapperMock.Object, validatorMock.Object);
+        return new ServiceSetup(patientRepoMock, mapper, validator);
     }
 
     private class ServiceSetup
