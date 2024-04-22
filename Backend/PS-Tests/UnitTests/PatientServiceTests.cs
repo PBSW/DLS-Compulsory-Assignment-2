@@ -4,7 +4,6 @@ using FluentValidation;
 using Moq;
 using PS_Application;
 using PS_Application.Interfaces;
-using PS_Infrastructure.Interfaces;
 using Shared;
 
 namespace PS_Tests.UnitTests;
