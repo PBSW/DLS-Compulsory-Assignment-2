@@ -1,9 +1,9 @@
 
 $theme-colors: (
   "primary": rgb(252, 84, 84),
-  "secondary": #6c757d,
+  "secondary": #ecebeb,
   "success": #28a745,
-  "info": #17a2b8,
+  "info": #dbdbdb,
   "warning": #ffc107,
   "danger": #dc7235,
   "light": #f8f9fa,
@@ -26,11 +26,24 @@ $theme-colors: (
 .btn-primary {
   background-color: map-get($theme-colors, primary);
   border-color: map-get($theme-colors, primary);
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: darken(map-get($theme-colors, primary), 10%);
+  border-color: darken(map-get($theme-colors, primary), 10%);
 }
 
 .btn-secondary {
   background-color: map-get($theme-colors, secondary);
+  color: map-get($map: $theme-colors, $key: dark);
   border-color: map-get($theme-colors, secondary);
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: darken(map-get($theme-colors, secondary), 10%);
+  border-color: darken(map-get($theme-colors, secondary), 10%);
 }
 
 

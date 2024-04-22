@@ -33,10 +33,10 @@
     </div>
     <!--Errors-->
     <div *ngIf="form.get('cvr1')?.invalid && form.get('cvr1')?.touched">
-      <small class="text-black fw-bold ">First six of CPR must be fix digits</small>
+      <small class="text-black fw-bold me-2 ">First six of CPR must be ix digits</small>
     </div>
     <div *ngIf="form.get('cvr2')?.invalid && form.get('cvr2')?.touched">
-      <small class="text-black fw-bold ">Last four of CPR must be four digits</small>
+      <small class="text-black fw-bold me-2 ">Last four of CPR must be four digits</small>
     </div>
   </div>
 
@@ -69,10 +69,10 @@
     </div>
     <!--Errors-->
     <div *ngIf="form.get('systolic')?.invalid && form.get('systolic')?.touched">
-      <small class="text-black fw-bold ">Systolic must be a number</small>
+      <small class="text-black fw-bold ms-2 ">Systolic must be a number</small>
     </div>
     <div *ngIf="form.get('diastolic')?.invalid && form.get('diastolic')?.touched">
-      <small class="text-black fw-bold ">Diastolic must be a number</small>
+      <small class="text-black fw-bold ms-2">Diastolic must be a number</small>
     </div>
   </div>
   </form>

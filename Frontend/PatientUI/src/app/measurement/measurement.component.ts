@@ -8,6 +8,9 @@ import {
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { Measurement } from '../../domain/measurement';
 import { CommonModule } from '@angular/common';
+import { MeasurementService } from '../../services/measurement.service';
+import { take, pipe } from 'rxjs';
+import { ToastService } from '../../services/toasts/toast.service';
 
 @Component({
   selector: 'app-measurement',
@@ -20,7 +23,10 @@ export class MeasurementComponent implements OnInit {
   form: FormGroup = new FormGroup({});
   active: number = 1;
 
-  constructor() {
+  constructor(
+    private measurementService: MeasurementService,
+    private toasts: ToastService
+  ) {
     this._createFormGroup();
   }
 
@@ -28,14 +34,21 @@ export class MeasurementComponent implements OnInit {
 
   resetForm() {
     this.form.reset();
+    this.toasts.showInfoNoHeader('Form reset');
   }
 
   submitMeasurement() {
     if (this.form.valid) {
-      console.log(this.measurement);
+      this.measurementService
+        .postMeasurement(this.measurement)
+        .pipe(take(1))
+        .subscribe((response) => {
+          if (response) {
+            this.toasts.showSuccessNoHeader('Measurement posted successfully');
+          }
+        });
     } else {
-      console.log('Form is invalid');
-      console.log(this.form.errors);
+      this.toasts.showErrorNoHeader('Form is invalid');
     }
   }
 
