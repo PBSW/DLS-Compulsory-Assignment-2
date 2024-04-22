@@ -1,7 +1,7 @@
 pipeline {
     agent any
     stages {
-        stage('Unit tests') {
+        stage('Unit testing') {
             steps {
                 sh 'dotnet test Backend/PS-Tests'
                 sh 'dotnet test Backend/MS-Tests'
