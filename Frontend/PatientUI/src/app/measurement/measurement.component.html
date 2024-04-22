@@ -33,7 +33,7 @@
     </div>
     <!--Errors-->
     <div *ngIf="form.get('cvr1')?.invalid && form.get('cvr1')?.touched">
-      <small class="text-black fw-bold me-2 ">First six of CPR must be ix digits</small>
+      <small class="text-black fw-bold me-2 ">First six of CPR must be six digits</small>
     </div>
     <div *ngIf="form.get('cvr2')?.invalid && form.get('cvr2')?.touched">
       <small class="text-black fw-bold me-2 ">Last four of CPR must be four digits</small>
