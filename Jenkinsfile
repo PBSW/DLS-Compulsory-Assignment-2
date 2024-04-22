@@ -1,29 +1,29 @@
 pipeline {
     agent any
-
     stages {
-        stage('Build') {
+        stage('Unit testing') {
+            steps {
+                sh 'dotnet test Backend/PS-Tests'
+                sh 'dotnet test Backend/MS-Tests'
+            }
+        }
+        stage('Build docker images') {
             steps {
                 sh 'docker compose build'
             }
         }
-        stage('Run') {
-            steps {
-                echo 'docker compose up -d'
-            }
-        }  
-        stage('Test') {
-            steps {
-                echo 'docker compose test'
-            }
-        }
-        stage('Deliver') {
+        stage('Publish docker images') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'Dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) 
                 {
-                sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-                sh 'docker compose push'
+                    sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+                    sh 'docker compose push'
                 }
+            }
+        }
+        stage('Deploy - fake') {
+            steps {
+                echo 'serve application'
             }
         }
     }
