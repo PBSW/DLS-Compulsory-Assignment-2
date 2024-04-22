@@ -33,6 +33,11 @@ $underline-color: map-get($map: $theme-colors, $key: 'light');
   font-size: 1.2rem;
 }
 
+::placeholder {
+  color: $underline-color;
+  opacity: 0.5;
+}
+
 
 .align-text-end {
   text-align: end;
