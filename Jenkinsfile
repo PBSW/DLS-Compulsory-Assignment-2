@@ -6,24 +6,25 @@ pipeline {
             steps {
                 sh 'docker compose build'
             }
-        }
-        stage('Run') {
-            steps {
-                echo 'docker compose up -d'
-            }
         }  
         stage('Test') {
             steps {
-                echo 'docker compose test'
+                sh 'dotnet test Backend/PS-Tests'
+                sh 'dotnet test Backend/MS-Tests'
             }
         }
-        stage('Deliver') {
+        stage('Upload docker images') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'Dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) 
                 {
-                sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
-                sh 'docker compose push'
+                    sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+                    sh 'docker compose push'
                 }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'serve application'
             }
         }
     }
