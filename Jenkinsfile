@@ -36,7 +36,8 @@ pipeline {
                 echo 'serve application'
             }
         }
-        post {
+    }
+    post {
             success {
                 setBuildStatus("Build succeeded", "SUCCESS");
             }
@@ -44,5 +45,4 @@ pipeline {
                 setBuildStatus("Build failed", "FAILURE");
             }
         }
-    }
 }
