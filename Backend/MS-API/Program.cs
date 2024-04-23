@@ -1,4 +1,8 @@
 using System.Reflection;
+using FluentValidation;
+using MS_Application;
+using MS_Application.Interfaces;
+using MS_Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +14,19 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddControllers();
+
+//Database Connection
+builder.Services.AddDbContext<DatabaseContext>(options => options.Use(
+    "Data source=db.db"
+));
+
+// Dependency Resolvers
+builder.Services.AddScoped<IMeasurementService, MeasurementService>();
+builder.Services.AddScoped<IMeasurementRepository, MeasurementRepository>();
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
