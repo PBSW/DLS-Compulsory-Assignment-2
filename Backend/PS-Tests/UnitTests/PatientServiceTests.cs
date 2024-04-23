@@ -126,7 +126,7 @@ public class PatientServiceTests
     [InlineData(" ", "Mail is required")]
     [InlineData(null, "Mail is null")]
     [InlineData("awdawdlkdaw", "Incorrect Mail formatting")]
-    [InlineData("thisshouldbeanextremelylongemailthatgoesoverthelimitofcharactersavailablefortheemailexample@example.com", "Mail cannot be longer than 128 characters")]
+    [InlineData("thisshouldbeanextremelylongemailthatgoesoverthelimitofcharactersavailablefortheemailexamplesothisshouldbelongenoughforittothrownow@example.com", "Mail cannot be longer than 128 characters")]
     public async Task CreatePatient_WithInvalidPatientMail_ShouldThrowValidationExceptionWithMessage(string mail, string errorMessage)
     {
         // Setup

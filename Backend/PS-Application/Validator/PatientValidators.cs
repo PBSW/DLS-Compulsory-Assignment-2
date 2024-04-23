@@ -18,7 +18,7 @@ public class PatientValidators : AbstractValidator<Patient>
         RuleFor(x => x.Mail)
             .NotNull().WithMessage("Mail is null")
             .NotEmpty().WithMessage("Mail is required")
-            .MaximumLength(128).WithMessage("Last name cannot be longer than 128 characters")
+            .MaximumLength(128).WithMessage("Mail cannot be longer than 128 characters")
             .EmailAddress().WithMessage("Incorrect Mail formatting");
 
         RuleFor(x => x.Name)
