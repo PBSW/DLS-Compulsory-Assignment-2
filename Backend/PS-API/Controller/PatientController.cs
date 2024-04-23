@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PS_Application.Interfaces;
+using Shared.DTOs.Delete;
 using Shared.DTOs.Requests;
 using Shared.Monitoring;
 
@@ -36,7 +37,7 @@ public class PatientController : ControllerBase
     
     [Route("api/patient")]
     [HttpDelete]
-    public async Task<IActionResult> DeletePatientAsync(string ssn)
+    public async Task<IActionResult> DeletePatientAsync(PatientDelete request)
     {
         // Monitoring and Logging
         Monitoring.ActivitySource.StartActivity("DeletePatientAsync");
@@ -44,7 +45,7 @@ public class PatientController : ControllerBase
 
         try
         {
-            return Ok(await _patientService.DeletePatientAsync(ssn));
+            return Ok(await _patientService.DeletePatientAsync(request));
         }
         catch (Exception e)
         {

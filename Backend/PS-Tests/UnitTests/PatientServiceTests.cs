@@ -6,6 +6,7 @@ using PS_Application;
 using PS_Application.Interfaces;
 using PS_Application.Validator;
 using Shared;
+using Shared.DTOs.Delete;
 using Shared.DTOs.Requests;
 using Shared.DTOs.Response;
 using Shared.Helpers.Mapper;
@@ -181,15 +182,25 @@ public class PatientServiceTests
         var setup = CreateServiceSetup();
         var service = setup.CreateService();
         
-        var ssn = "1234567890";
+        var patientDelete = new PatientDelete()
+        {
+            Ssn = "0123456789"
+        };
         
-        setup.GetMockRepo().Setup(x => x.DeletePatientAsync(ssn)).ReturnsAsync(true);
+        var patient = new Patient()
+        {
+            Name = "Test",
+            Mail = "testing@example.com",
+            Ssn = "0123456789"
+        };
+        
+        setup.GetMockRepo().Setup(x => x.DeletePatientAsync(patient)).ReturnsAsync(true);
         
         // Act
-        Func<Task> action = () => service.DeletePatientAsync(ssn).Result;
+        Func<Task> action = () => service.DeletePatientAsync(patientDelete);
         
         // Assert
-        await action.Should().NotThrow();
+        await action.Should().NotThrowAsync();
     }
     
     [Fact]
@@ -203,7 +214,7 @@ public class PatientServiceTests
         Func<Task> action = () => service.DeletePatientAsync(null);
         
         // Assert
-        await action.Should().ThrowAsync<NullReferenceException>().WithMessage("SSN is null");
+        await action.Should().ThrowAsync<NullReferenceException>().WithMessage("PatientDelete is null");
     }
     
     // Helper Classes and Methods

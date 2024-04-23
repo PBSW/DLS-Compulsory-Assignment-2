@@ -2,6 +2,7 @@
 using FluentValidation;
 using PS_Application.Interfaces;
 using Shared;
+using Shared.DTOs.Delete;
 using Shared.DTOs.Requests;
 using Shared.DTOs.Response;
 using Shared.Monitoring;
@@ -47,5 +48,33 @@ public class PatientService : IPatientService
         PatientResponse response = _mapper.Map<PatientResponse>(patientReturn);
 
         return response;
+    }
+
+    public async Task<bool> DeletePatientAsync(PatientDelete request)
+    {
+        // Monitoring and Logging
+        using var activity = Monitoring.ActivitySource.StartActivity("DeletePatientAsync");
+        Monitoring.Log.Debug("Deleting Patient");
+        
+        if (request == null)
+        {
+            throw new NullReferenceException("PatientDelete is null");
+        }
+        
+        Patient patient = _mapper.Map<Patient>(request);
+
+        patient.Mail = "Delete@Me.com";
+        patient.Name = "Delete Me";
+        
+        var validation = await _validator.ValidateAsync(patient);
+        if (!validation.IsValid)
+        {
+            Monitoring.Log.Error(validation.ToString());
+            throw new ValidationException(validation.ToString());
+        }
+        
+        bool action = await _repo.DeletePatientAsync(patient);
+
+        return action;
     }
 }

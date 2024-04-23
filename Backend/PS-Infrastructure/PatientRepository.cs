@@ -39,4 +39,25 @@ public class PatientRepository : IPatientRepository
 
         return entityEntry.Entity; // Access the Entity property to get the added patient entity
     }
+
+    public async Task<bool> DeletePatientAsync(Patient request)
+    {
+        // Monitoring and Logging
+        using var activity = Monitoring.ActivitySource.StartActivity("DeletePatientAsync");
+        Monitoring.Log.Debug("Deleting Patient from Database");
+
+        var patient = await _dbcontext.Set<Patient>().FirstOrDefaultAsync(p => p.Ssn == request.Ssn);
+        
+        if (patient == null)
+            return false;
+        
+        // Patient exists, remove them
+        _dbcontext.Set<Patient>().Remove(patient);
+        int change = await _dbcontext.SaveChangesAsync();
+        
+        if (change == 0)
+            return false;
+        
+        return true;
+    }
 }
