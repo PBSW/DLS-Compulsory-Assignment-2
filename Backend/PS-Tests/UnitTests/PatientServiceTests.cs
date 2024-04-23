@@ -173,6 +173,39 @@ public class PatientServiceTests
         await action.Should().ThrowAsync<ValidationException>().WithMessage(errorMessage);
     }
     
+    // Patient Delete Tests
+    [Fact]
+    public async void DeletePatient_WithValidSsn_ShouldNotThrowException()
+    {
+        // Setup
+        var setup = CreateServiceSetup();
+        var service = setup.CreateService();
+        
+        var ssn = "1234567890";
+        
+        setup.GetMockRepo().Setup(x => x.DeletePatientAsync(ssn)).ReturnsAsync(true);
+        
+        // Act
+        Func<Task> action = () => service.DeletePatientAsync(ssn).Result;
+        
+        // Assert
+        await action.Should().NotThrow();
+    }
+    
+    [Fact]
+    public async void DeletePatient_WithNullSsn_ShouldThrowNullExceptionWithMessage()
+    {
+        // Setup
+        var setup = CreateServiceSetup();
+        var service = setup.CreateService();
+        
+        // Act
+        Func<Task> action = () => service.DeletePatientAsync(null);
+        
+        // Assert
+        await action.Should().ThrowAsync<NullReferenceException>().WithMessage("SSN is null");
+    }
+    
     // Helper Classes and Methods
     private ServiceSetup CreateServiceSetup()
     {
