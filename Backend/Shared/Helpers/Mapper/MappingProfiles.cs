@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Shared.DTOs.Delete;
 using Shared.DTOs.Requests;
 using Shared.DTOs.Response;
 
@@ -10,5 +11,6 @@ public class MappingProfiles : Profile
     {
         CreateMap<PatientCreate, Patient>();
         CreateMap<Patient, PatientResponse>();
+        CreateMap<PatientDelete, Patient>();
     }
 }

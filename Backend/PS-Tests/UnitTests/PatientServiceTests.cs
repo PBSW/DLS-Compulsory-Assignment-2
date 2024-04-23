@@ -6,6 +6,7 @@ using PS_Application;
 using PS_Application.Interfaces;
 using PS_Application.Validator;
 using Shared;
+using Shared.DTOs.Delete;
 using Shared.DTOs.Requests;
 using Shared.DTOs.Response;
 using Shared.Helpers.Mapper;
@@ -171,6 +172,49 @@ public class PatientServiceTests
         
         // Assert
         await action.Should().ThrowAsync<ValidationException>().WithMessage(errorMessage);
+    }
+    
+    // Patient Delete Tests
+    [Fact]
+    public async void DeletePatient_WithValidSsn_ShouldNotThrowException()
+    {
+        // Setup
+        var setup = CreateServiceSetup();
+        var service = setup.CreateService();
+        
+        var patientDelete = new PatientDelete()
+        {
+            Ssn = "0123456789"
+        };
+        
+        var patient = new Patient()
+        {
+            Name = "Test",
+            Mail = "testing@example.com",
+            Ssn = "0123456789"
+        };
+        
+        setup.GetMockRepo().Setup(x => x.DeletePatientAsync(patient)).ReturnsAsync(true);
+        
+        // Act
+        Func<Task> action = () => service.DeletePatientAsync(patientDelete);
+        
+        // Assert
+        await action.Should().NotThrowAsync();
+    }
+    
+    [Fact]
+    public async void DeletePatient_WithNullSsn_ShouldThrowNullExceptionWithMessage()
+    {
+        // Setup
+        var setup = CreateServiceSetup();
+        var service = setup.CreateService();
+        
+        // Act
+        Func<Task> action = () => service.DeletePatientAsync(null);
+        
+        // Assert
+        await action.Should().ThrowAsync<NullReferenceException>().WithMessage("PatientDelete is null");
     }
     
     // Helper Classes and Methods
