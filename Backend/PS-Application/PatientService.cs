@@ -50,6 +50,24 @@ public class PatientService : IPatientService
         return response;
     }
 
+    public async Task<List<PatientResponse>> GetAllPatientsAsync()
+    {
+        // Monitoring and Logging
+        using var activity = Monitoring.ActivitySource.StartActivity("GetAllPatientsAsync");
+        Monitoring.Log.Debug("Getting all Patients");
+
+        List<Patient> patientList = await _repo.GetAllPatientsAsync();
+
+        if (patientList == null)
+        {
+            throw new NullReferenceException("Patient list from Repo is null");
+        }
+        
+        List<PatientResponse> patientResponseList = _mapper.Map<List<PatientResponse>>(patientList);
+        
+        return patientResponseList;
+    }
+    
     public async Task<bool> DeletePatientAsync(PatientDelete request)
     {
         // Monitoring and Logging
