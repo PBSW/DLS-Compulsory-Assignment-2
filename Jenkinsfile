@@ -3,8 +3,8 @@ pipeline {
     stages {
         stage('Unit testing') {
             steps {
-                sh 'docker-compose -f docker-compose.tests.yml run -u root --rm ps'
-                sh 'docker-compose -f docker-compose.tests.yml run -u root --rm ms'
+                sh 'docker-compose -f docker-compose.tests.yml run --rm Project /src/Backend/PS-Tests/test-script.sh'
+                sh 'docker-compose -f docker-compose.tests.yml run --rm Project /src/Backend/MS-Tests/test-script.sh'
             }
         }
         stage('Build docker images') {
