@@ -1,7 +1,60 @@
-<app-patient>
+<div class="container-fluid p-3">
+  <div class="d-flex flex-row flex-shrink-1">
+    <!-- Patients -->
+    <div class="d-flex flex-column h-100 ">
+      <!-- Search -->
+      <div class="d-flex flex-row mb-3">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search"
+          [(ngModel)]="searchText"
+        />
+      </div>
+      <div
+        *ngFor="let patient of patientCollection | patientSearch : searchText"
+        class="card-custom"
+        (click)="viewingPatient = patient"
+        [ngClass]="[
+          patient === viewingPatient
+            ? 'card-custom-viewing'
+            : 'card-custom-default'
+        ]"
+      >
+        <div class="card-header-custom">
+          <h5 class="m-0">{{ patient.name }}</h5>
+        </div>
 
-</app-patient>
+        <div class="card-body-custom">
+          <h6 class="p-0 m-0">
+            {{ patient.ssn }} | {{ calcAge(patient.ssn) }}
+            <small> years old </small>
+          </h6>
+          <span class="p-0 m-0 h6">
+            <i class="fa-solid fa-envelope me-1"></i>
+            <a class="h6" href="mailto:{{ patient.mail }}">{{
+              patient.mail
+            }}</a>
+          </span>
+        </div>
+      </div>
 
-<app-measurements>
+      <!-- CRUD BUTTONS -->
 
-</app-measurements>
+      <div class="d-flex flex-row mt-auto ">
+        <button class="btn btn-primary me-2" [disabled]="viewingPatient">
+          Add
+        </button>
+        <button class="btn btn-secondary me-2" [disabled]="!viewingPatient">
+          Edit
+        </button>
+        <button class="btn btn-danger me-2" [disabled]="!viewingPatient">
+          Delete
+        </button>
+      </div>
+
+
+    </div>
+    <app-measurements> </app-measurements>
+  </div>
+</div>
