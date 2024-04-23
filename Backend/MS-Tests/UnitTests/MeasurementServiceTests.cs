@@ -1,4 +1,10 @@
 using AutoMapper;
+using FluentAssertions;
+using FluentValidation;
+using Moq;
+using MS_Application;
+using MS_Application.Helpers;
+using MS_Application.Interfaces;
 using Shared;
 using Shared.Helpers.Mapper;
 
@@ -20,7 +26,7 @@ public class MeasurementServiceTests
     public void CreateService_WithNullAutoMapper_ShouldThrowNullExceptionWithMessage()
     {
         Action action = () =>
-            new MeasurementService(new Mock<IMeasurementRepository>().Object, null, new Mock<IValidator<Patient>>().Object);
+            new MeasurementService(new Mock<IMeasurementRepository>().Object, null, new Mock<IValidator<Measurement>>().Object);
 
         action.Should().Throw<NullReferenceException>().WithMessage("MeasurementService mapper is null");
     }
@@ -60,7 +66,7 @@ public class MeasurementServiceTests
         private IMapper _mapper;
         private IValidator<Measurement> _valdiator;
 
-        public ServiceSetup(Mock<MeasurementRepository> measurementRepositoryMock, IMapper mapper, IValidator<Measurement> validator)
+        public ServiceSetup(Mock<IMeasurementRepository> measurementRepositoryMock, IMapper mapper, IValidator<Measurement> validator)
         {
             _measurementRepositoryMock = measurementRepositoryMock;
             _mapper = mapper;
