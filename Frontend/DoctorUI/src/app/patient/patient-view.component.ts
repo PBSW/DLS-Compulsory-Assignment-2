@@ -22,7 +22,15 @@ export class PatientViewComponent {
 
   patientCollection: Patient[] = [
     { mail: 'mail1@mail.com', measurements: [], name: 'John Doe', ssn: '160499-1234' },
-    { mail: 'mail2@mail.com', measurements: [], name: 'Jane Doe', ssn: '311098-1234' }
+    { mail: 'mail2@mail.com', measurements: [], name: 'Jane Doe', ssn: '311098-1234' },
+    { mail: 'mail1@mail.com', measurements: [], name: 'John Doe', ssn: '160499-1234' },
+    { mail: 'mail2@mail.com', measurements: [], name: 'Jane Doe', ssn: '311098-1234' },
+    { mail: 'mail1@mail.com', measurements: [], name: 'John Doe', ssn: '160499-1234' },
+    { mail: 'mail2@mail.com', measurements: [], name: 'Jane Doe', ssn: '311098-1234' },
+    { mail: 'mail1@mail.com', measurements: [], name: 'John Doe', ssn: '160499-1234' },
+    { mail: 'mail2@mail.com', measurements: [], name: 'Jane Doe', ssn: '311098-1234' },
+    { mail: 'mail1@mail.com', measurements: [], name: 'John Doe', ssn: '160499-1234' },
+    { mail: 'mail2@mail.com', measurements: [], name: 'Jane Doe', ssn: '311098-1234' },
   ];
 
 
