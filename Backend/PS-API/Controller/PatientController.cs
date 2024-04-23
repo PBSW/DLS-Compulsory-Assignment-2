@@ -33,4 +33,23 @@ public class PatientController : ControllerBase
             return BadRequest(e.Message);
         }
     }
+    
+    [Route("api/patient")]
+    [HttpDelete]
+    public async Task<IActionResult> DeletePatientAsync(string ssn)
+    {
+        // Monitoring and Logging
+        Monitoring.ActivitySource.StartActivity("DeletePatientAsync");
+        Monitoring.Log.Debug("Deleting Patient");
+
+        try
+        {
+            return Ok(await _patientService.DeletePatientAsync(ssn));
+        }
+        catch (Exception e)
+        {
+            Monitoring.Log.Error(e.Message);
+            return BadRequest(e.Message);
+        }
+    }
 }
