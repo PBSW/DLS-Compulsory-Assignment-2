@@ -174,6 +174,39 @@ public class PatientServiceTests
         await action.Should().ThrowAsync<ValidationException>().WithMessage(errorMessage);
     }
     
+    // Patient GetAll Tests
+    [Fact]
+    public async void GetAllPatients_ShouldReturnValidPatientList()
+    {
+        // Setup
+        var setup = CreateServiceSetup();
+        var service = setup.CreateService();
+        
+        setup.GetMockRepo().Setup(x => x.GetAllPatientsAsync()).ReturnsAsync(new List<Patient>());
+        
+        // Act
+        Func<Task> action = () => service.GetAllPatientsAsync();
+        
+        // Assert
+        await action.Should().NotThrowAsync();
+    }
+    
+    [Fact]
+    public async void GetAllPatients_WithNullFromRepo_ShouldThrowNullReferenceExceptionWithmessage()
+    {
+        // Setup
+        var setup = CreateServiceSetup();
+        var service = setup.CreateService();
+        
+        setup.GetMockRepo().Setup(x => x.GetAllPatientsAsync()).ReturnsAsync((List<Patient>)null);
+        
+        // Act
+        Func<Task> action = () => service.GetAllPatientsAsync();
+        
+        // Assert
+        await action.Should().ThrowAsync<NullReferenceException>().WithMessage("Patient list from Repo is null");
+    }
+
     // Patient Delete Tests
     [Fact]
     public async void DeletePatient_WithValidSsn_ShouldNotThrowException()

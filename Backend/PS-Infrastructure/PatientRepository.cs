@@ -40,6 +40,15 @@ public class PatientRepository : IPatientRepository
         return entityEntry.Entity; // Access the Entity property to get the added patient entity
     }
 
+    public Task<List<Patient>> GetAllPatientsAsync()
+    {
+        // Monitoring and Logging
+        using var activity = Monitoring.ActivitySource.StartActivity("GetAllPatientsAsync");
+        Monitoring.Log.Debug("Getting all Patients from Database");
+
+        return _dbcontext.Patients.ToListAsync();
+    }
+    
     public async Task<bool> DeletePatientAsync(Patient request)
     {
         // Monitoring and Logging
