@@ -3,8 +3,8 @@ pipeline {
     stages {
         stage('Unit testing') {
             steps {
-                sh 'dotnet test Backend/PS-Tests'
-                sh 'dotnet test Backend/MS-Tests'
+                sh 'docker compose -f docker-compose.tests.yml run --rm ps'
+                sh 'docker compose -f docker-compose.tests.yml run --rm ms'
             }
         }
         stage('Build docker images') {
@@ -21,10 +21,6 @@ pipeline {
                 }
             }
         }
-        stage('Deploy - fake') {
-            steps {
-                echo 'serve application'
-            }
-        }
+
     }
 }
