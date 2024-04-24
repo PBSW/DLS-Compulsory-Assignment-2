@@ -1,5 +1,6 @@
 using System.Reflection;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using MS_Application;
 using MS_Application.Interfaces;
 using MS_Infrastructure;
@@ -16,8 +17,8 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllers();
 
 //Database Connection
-builder.Services.AddDbContext<DatabaseContext>(options => options.Use(
-    "Data source=db.db"
+builder.Services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(
+    builder.Configuration.GetConnectionString("DefaultConnection")
 ));
 
 // Dependency Resolvers

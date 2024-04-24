@@ -2,6 +2,7 @@ version: '3.9'
 
 services:
     gateway:
+        container_name: dls-2-gateway
         build:
             context: .
             dockerfile: Backend/Gateway/Dockerfile
@@ -10,6 +11,7 @@ services:
             - "8081:8080"
     
     patient-service:
+        container_name: dls-2-patient-service
         build:
             context: .
             dockerfile: Backend/PS-API/Dockerfile
@@ -20,6 +22,7 @@ services:
             - gateway
     
     measurement-service:
+        container_name: dls-2-measurement-service
         build:
             context: .
             dockerfile: Backend/MS-API/Dockerfile
@@ -30,6 +33,7 @@ services:
             - gateway
     
     doctor-ui:
+        container_name: dls-2-doctor-ui
         build:
             context: Frontend/DoctorUI/
             dockerfile: Dockerfile
@@ -42,6 +46,7 @@ services:
             
     
     patient-ui:
+        container_name: dls-2-patient-ui
         build:
             context: Frontend/PatientUI/
             dockerfile: Dockerfile
@@ -51,9 +56,22 @@ services:
         ports:
             - "4202:4200"
         command: [ "ng", "serve", "--host", "0.0.0.0" ]
+    
+    patient_database:
+        container_name: dls-2-Patient-DB
+        image: mysql:5.7
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: db
+            MYSQL_USER: database_user
+            MYSQL_PASSWORD: Password1
+        ports:
+            - "3306:3306"
+        volumes:
+            - patient_db:/var/lib/mysql
         
     measurement_database:
-        container_name: MySQL_Measurement_DB
+        container_name: dls-2-Measurement_DB
         image: mysql:5.7
         environment:
             MYSQL_ROOT_PASSWORD: root
@@ -94,5 +112,7 @@ services:
             - zipkin_data:/mysql/data
               
 volumes:
+    patient_db:
+    measurement_db:
     rps_seq_data:
     zipkin_data:

@@ -2,6 +2,8 @@
 using FluentValidation;
 using MS_Application.Interfaces;
 using Shared;
+using Shared.DTOs.Create;
+using Shared.DTOs.Response;
 
 namespace MS_Application;
 
