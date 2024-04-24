@@ -57,10 +57,10 @@ $theme-colors: (
   card: $gray-150,
 );
 
-$status-colors: (
-  success: $green,
-  waiting: $yellow,
-  error: $red,
+$grade-colors: (
+  normal: $green,
+  warning: $orange,
+  danger: $red,
 );
 
 // Use Bootstrap defaults for other variables, imported here so we can access all app variables in one place when used

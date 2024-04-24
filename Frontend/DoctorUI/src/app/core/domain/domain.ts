@@ -11,7 +11,6 @@ export interface Measurement {
   systolic: number;
   diastolic: number;
   seen: boolean;
-  measurementGrade: MeasurementGrade;
 }
 
 export enum MeasurementGrade {
