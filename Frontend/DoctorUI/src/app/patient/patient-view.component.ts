@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MeasurementsComponent } from './measurements/measurements.component';
 import { Measurement, MeasurementGrade, Patient } from '../core/domain/domain';
 import { CommonModule } from '@angular/common';
@@ -6,7 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { PatientSearchPipe } from '../core/pipes/patient-search.pipe';
 import { PatientSeenPipe } from '../core/pipes/patient-seen.pipe';
 import { calcAge } from '../core/helpers/age-calc';
-import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { PatientCreateModalComponent } from './patient-create-modal/patient-create-modal.component';
 
 @Component({
   selector: 'app-patient-view',
@@ -25,6 +26,8 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 export class PatientViewComponent {
   showNewOnly: boolean = false;
   searchText: string = '';
+
+  private modalService = inject(NgbModal);
 
   viewingPatient: Patient | null = null;
 
@@ -115,5 +118,8 @@ export class PatientViewComponent {
     });
   }
 
+  newPatient() {
+    const modalRef = this.modalService.open(PatientCreateModalComponent, { centered: true });
+  }
 
 }

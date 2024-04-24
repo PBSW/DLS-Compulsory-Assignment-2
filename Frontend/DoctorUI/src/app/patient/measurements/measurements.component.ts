@@ -1,9 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { Measurement, MeasurementGrade, Patient } from '../../core/domain/domain';
 import { calcAge } from '../../core/helpers/age-calc';
 import { CommonModule } from '@angular/common';
 import { PatientService } from '../../services/patient.service';
-import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { PatientDeleteModalComponent } from '../patient-delete-modal/patient-delete-modal.component';
 
 @Component({
   selector: 'app-measurements',
@@ -15,6 +16,7 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 export class MeasurementsComponent {
 
   @Input() patient: Patient | null = null;
+  private modalService = inject(NgbModal);
 
   constructor(private patientService: PatientService) { }
 
@@ -36,6 +38,15 @@ export class MeasurementsComponent {
   deletePatient(patient: Patient) {
     this.patientService.deletePatient(patient.ssn);
   }
+
+  openDeleteModal(patient: Patient) {
+    const modalRef =this.modalService.open(PatientDeleteModalComponent, { centered: true });
+    modalRef.result.then((bool) => {
+      if (bool) this.deletePatient(patient);
+    });
+  }
+
+
 
 
   averageMeasurement(): string {

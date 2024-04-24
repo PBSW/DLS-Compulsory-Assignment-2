@@ -1,0 +1,91 @@
+<div class="modal-header">
+  <span>
+    <h4 class="modal-title">Create patient</h4>
+  </span>
+</div>
+<div class="modal-body">
+  <!-- Create form -->
+  <form [formGroup]="formGroup" (ngSubmit)="create()">
+    <div class="mb-3">
+      <label for="name" class="form-label">Name</label>
+      <input
+        type="text"
+        class="form-control"
+        id="name"
+        formControlName="name"
+        required
+      />
+
+      <div
+        *ngIf="
+          formGroup.get('name')?.hasError('required') &&
+          formGroup.get('name')?.touched
+        "
+        class="text-danger"
+      >
+        Name is required
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="ssn" class="form-label">SSN</label>
+      <input
+        type="text"
+        class="form-control"
+        id="ssn"
+        formControlName="ssn"
+        required
+      />
+
+      <div
+        *ngIf="
+          formGroup.get('ssn')?.hasError('required') &&
+          formGroup.get('ssn')?.touched
+        "
+        class="text-danger"
+      >
+        SSN is required
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input
+        type="email"
+        class="form-control"
+        id="email"
+        formControlName="email"
+        required
+      />
+
+      <div
+        *ngIf="
+          formGroup.get('email')?.hasError('required') &&
+          formGroup.get('email')?.touched
+        "
+        class="text-danger"
+      >
+        SSN is required
+      </div>
+    </div>
+
+
+
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-outline-dark"
+        (click)="activeModal.close(false)"
+      >
+        Close
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="activeModal.close(true)"
+      >
+        Create
+      </button>
+    </div>
+  </form>
+</div>
