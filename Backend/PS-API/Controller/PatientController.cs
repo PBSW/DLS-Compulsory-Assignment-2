@@ -18,7 +18,7 @@ public class PatientController : ControllerBase
     
     [HttpPost]
     [Route("api/patient")]
-    public async Task<IActionResult> CreatePatientAsync(PatientCreate request)
+    public async Task<IActionResult> CreatePatientAsync([FromBody] PatientCreate request)
     {
         // Monitoring and Logging
         Monitoring.ActivitySource.StartActivity("CreatePatientAsync");
@@ -57,7 +57,7 @@ public class PatientController : ControllerBase
     
     [HttpDelete]
     [Route("api/patient")]
-    public async Task<IActionResult> DeletePatientAsync(PatientDelete request)
+    public async Task<IActionResult> DeletePatientAsync([FromBody] PatientDelete request)
     {
         // Monitoring and Logging
         Monitoring.ActivitySource.StartActivity("DeletePatientAsync");

@@ -15,4 +15,6 @@ public class DatabaseContext : DbContext
             .HasKey(m => m.Id)
             .HasName("PK_Id");
     }
+    
+    public DbSet<Measurement> Measurements { get; set; }
 }

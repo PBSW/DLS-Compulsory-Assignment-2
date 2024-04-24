@@ -20,8 +20,23 @@ public class MeasurementService : IMeasurementService
         _validator = validator ?? throw new NullReferenceException("MeasurementService validator is null");
     }
 
-    public Task<MeasurementResponse> CreateMeasurementAsync(MeasurementCreate request)
+    public async Task<MeasurementResponse> CreateMeasurementAsync(MeasurementCreate request)
     {
-        throw new NotImplementedException();
+        if (request == null)
+        {
+            throw new ArgumentNullException("MeasurementCreate request is null");
+        }
+        
+        var measurement = _mapper.Map<Measurement>(request);
+        
+        var validationResult = _validator.Validate(measurement);
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException(validationResult.Errors);
+        }
+        
+        Measurement returnMeasurement = await _repo.CreateMeasurementAsync(measurement);
+        
+        return _mapper.Map<MeasurementResponse>(returnMeasurement);
     }
 }

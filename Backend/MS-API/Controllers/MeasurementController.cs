@@ -1,19 +1,18 @@
-﻿
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MS_Application.Interfaces;
+using Shared.DTOs.Create;
 using Shared.Monitoring;
 
 namespace MS_API.Controllers;
 
 [ApiController]
-public class MeasurementController
+public class MeasurementController : ControllerBase
 {
     private readonly IMeasurementService _service;
     
     public MeasurementController(IMeasurementService service)
     {
-        _service = service;
+        _service = service ?? throw new NullReferenceException("MeasurementController service is null");
     }
 
     [HttpPost]
@@ -26,12 +25,11 @@ public class MeasurementController
         
         try
         {
-            return Ok(_service.CreateMeasurementAsync(request));
+            return Ok(await _service.CreateMeasurementAsync(request));
         } catch (Exception e)
         {
             Monitoring.Log.Error(e.Message);
             return BadRequest(e.Message);
         }
     }
-    
 }
