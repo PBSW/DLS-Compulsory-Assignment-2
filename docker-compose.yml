@@ -57,27 +57,27 @@ services:
             - "4202:4200"
         command: [ "ng", "serve", "--host", "0.0.0.0" ]
     
-    patient_database:
-        container_name: dls-2-Patient-DB
+    patient-database:
+        container_name: dls-2-patient-db
         image: mysql:5.7
         environment:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: db
             MYSQL_USER: database_user
-            MYSQL_PASSWORD: Password1
+            MYSQL_PASSWORD: Password1!
         ports:
             - "3306:3306"
         volumes:
             - patient_db:/var/lib/mysql
         
-    measurement_database:
-        container_name: dls-2-Measurement_DB
+    measurement-database:
+        container_name: dls-2-measurement_db
         image: mysql:5.7
         environment:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: db
             MYSQL_USER: database_user
-            MYSQL_PASSWORD: Password1
+            MYSQL_PASSWORD: Password1!
         ports:
             - "3307:3306"
         volumes:

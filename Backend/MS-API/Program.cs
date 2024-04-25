@@ -17,8 +17,8 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllers();
 
 //Database Connection
-builder.Services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(
-    builder.Configuration.GetConnectionString("DefaultConnection")
+builder.Services.AddDbContext<DatabaseContext>(options => options.UseMySql(
+    builder.Configuration.GetConnectionString("DefaultConnection"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
 ));
 
 // Dependency Resolvers

@@ -6,6 +6,8 @@ using MS_Application;
 using MS_Application.Helpers;
 using MS_Application.Interfaces;
 using Shared;
+using Shared.DTOs.Create;
+using Shared.DTOs.Requests;
 using Shared.Helpers.Mapper;
 
 namespace MS_Tests;
@@ -47,6 +49,79 @@ public class MeasurementServiceTests
             new Mock<IValidator<Measurement>>().Object);
 
         action.Should().NotThrow();
+    }
+    
+    // Patient Create Tests
+    [Fact]
+    public async void CreateMeasurement_WithValidMeasurement_ShouldReturnValidMeasurementObject()
+    {
+        // Setup
+        var setup = CreateServiceSetup();
+        var service = setup.CreateService();
+        
+        var measurement = new Measurement()
+        {
+            Id = 1,
+            PatientSSN = "0123456789",
+            Systolic = 120,
+            Diastolic = 80,
+            Seen = false
+        };
+        
+        var measurementCreate = new MeasurementCreate()
+        {
+            PatientSSN = "0123456789",
+            Systolic = 120,
+            Diastolic = 80,
+        };
+        
+        setup.GetMockRepo().Setup(x => x.CreateMeasurementAsync(measurement)).ReturnsAsync(measurement);
+        
+        // Act
+        Func<Task> action = () => service.CreateMeasurementAsync(measurementCreate);
+        
+        // Assert
+        await action.Should().NotThrowAsync();
+    }
+    
+    [Fact]
+    public async void CreateMeasurement_WithNullMeasurementCreate_ShouldThrowNullExceptionWithMessage()
+    {
+        // Setup
+        var setup = CreateServiceSetup();
+        var service = setup.CreateService();
+
+        // Act
+        Func<Task> action = () => service.CreateMeasurementAsync(null);
+        
+        // Assert
+        await action.Should().ThrowAsync<NullReferenceException>().WithMessage("MeasurementCreate is null");
+    }
+    
+    [Theory]
+    [InlineData("", "SSN is required")]
+    [InlineData(" ", "SSN is required")]
+    [InlineData(null, "SSN is null")]
+    [InlineData("awdadssad","SSN may only contain numbers")]
+    [InlineData("12345678901", "SSN may not be longer than 10 numbers")]
+    public async void CreateMeasurement_WithInvalidPatientSSN_ShouldThrowValidationExceptionWithMessage(string ssn, string errorMessage)
+    {
+        // Setup
+        var setup = CreateServiceSetup();
+        var service = setup.CreateService();
+        
+        var measurement = new MeasurementCreate()
+        {
+            PatientSSN = ssn,
+            Systolic = 120,
+            Diastolic = 80,
+        };
+        
+        // Act
+        Func<Task> action = () => service.CreateMeasurementAsync(measurement);
+        
+        // Assert
+        await action.Should().ThrowAsync<ValidationException>().WithMessage(errorMessage);
     }
     
     // Helper Classes and Methods

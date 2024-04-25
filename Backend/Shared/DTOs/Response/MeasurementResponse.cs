@@ -7,4 +7,5 @@ public class MeasurementResponse
     public int Systolic { get; set; }
     public int Diastolic { get; set; }
     public bool Seen { get; set; }
+    public string PatientSSN { get; set; }
 }

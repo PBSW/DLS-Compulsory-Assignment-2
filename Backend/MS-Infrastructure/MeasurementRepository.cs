@@ -11,6 +11,7 @@ public class MeasurementRepository : IMeasurementRepository
     public MeasurementRepository(DatabaseContext dbcontext)
     {
         _dbcontext = dbcontext;
+        _dbcontext.Database.EnsureCreated();
     }
 
     public async Task<Measurement> CreateMeasurementAsync(Measurement measurement)

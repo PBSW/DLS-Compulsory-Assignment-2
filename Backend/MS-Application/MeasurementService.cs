@@ -24,15 +24,15 @@ public class MeasurementService : IMeasurementService
     {
         if (request == null)
         {
-            throw new ArgumentNullException("MeasurementCreate request is null");
+            throw new NullReferenceException("MeasurementCreate is null");
         }
         
         var measurement = _mapper.Map<Measurement>(request);
         
-        var validationResult = _validator.Validate(measurement);
+        var validationResult = await _validator.ValidateAsync(measurement);
         if (!validationResult.IsValid)
         {
-            throw new ValidationException(validationResult.Errors);
+            throw new ValidationException(validationResult.ToString());
         }
         
         Measurement returnMeasurement = await _repo.CreateMeasurementAsync(measurement);
