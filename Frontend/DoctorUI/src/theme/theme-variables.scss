@@ -1,0 +1,67 @@
+/*
+ * Application global variables.
+ */
+
+// Set Font Awesome font path
+$fa-font-path: "@fortawesome/fontawesome-free/webfonts";
+
+// ---------------------------------------------------------------------------
+// Bootstrap variables
+//
+// Override Bootstrap variables here to suite your theme.
+// Copy variables you want to customize from node_modules/bootstrap/scss/_variables.scss
+
+//
+// Color system
+//
+
+$white: #fff;
+$gray-100: #f8f9fa;
+$gray-150: #f0f4f6;
+$gray-200: #e9ecef;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #868e96;
+$gray-700: #495057;
+$gray-800: #343a40;
+$gray-900: #212529;
+$dark: #32373c;
+$black: #000;
+
+$blue: #0073dd;
+$indigo: #6610f2;
+$violet: #6f42c1;
+$purple: #c170fa;
+$pink: #e83e8c;
+$red: #e23d3d;
+$orange: #fd7e14;
+$yellow: #e2d23d;
+$green: #28a745;
+$light-green: #84ef89;
+$teal: #20c997;
+$cyan: #17a2b8;
+
+
+$theme-colors: (
+  primary: $cyan,
+  secondary: $indigo,
+  tertiary: $gray-400,
+  active: $light-green,
+  info: $purple,
+  warning: $yellow,
+  paused: $yellow,
+  danger: $red,
+  light: $gray-100,
+  dark: $gray-800,
+  card: $gray-150,
+);
+
+$grade-colors: (
+  normal: $green,
+  warning: $orange,
+  danger: $red,
+);
+
+// Use Bootstrap defaults for other variables, imported here so we can access all app variables in one place when used
+// in components.
