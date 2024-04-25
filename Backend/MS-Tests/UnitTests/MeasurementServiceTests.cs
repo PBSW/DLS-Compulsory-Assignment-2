@@ -143,7 +143,7 @@ public class MeasurementServiceTests
     
     // Measurement GetAllBySSN Tests
     [Fact]
-    public async void GetAllMeasurements_ShouldReturnValidMeasurementList()
+    public async void GetAllMeasurementsBySSN_ShouldReturnValidMeasurementList()
     {
         // Setup
         var setup = CreateServiceSetup();

@@ -4,6 +4,7 @@ using MS_Application.Interfaces;
 using Shared;
 using Shared.DTOs.Create;
 using Shared.DTOs.Response;
+using Shared.Monitoring;
 
 namespace MS_Application;
 
@@ -22,6 +23,10 @@ public class MeasurementService : IMeasurementService
 
     public async Task<MeasurementResponse> CreateMeasurementAsync(MeasurementCreate request)
     {
+        // Monitoring and Logging
+        using var activity = Monitoring.ActivitySource.StartActivity("CreateMeasurementAsync");
+        Monitoring.Log.Debug("Creating Measurement");
+        
         if (request == null)
         {
             throw new NullReferenceException("MeasurementCreate is null");
@@ -38,5 +43,16 @@ public class MeasurementService : IMeasurementService
         Measurement returnMeasurement = await _repo.CreateMeasurementAsync(measurement);
         
         return _mapper.Map<MeasurementResponse>(returnMeasurement);
+    }
+    
+    public async Task<List<MeasurementResponse>> GetAllMeasurementsAsync()
+    {
+        // Monitoring and Logging
+        using var activity = Monitoring.ActivitySource.StartActivity("GetAllMeasurementsAsync");
+        Monitoring.Log.Debug("Getting all Measurements");
+        
+        List<Measurement> measurementList = await _repo.GetAllMeasurementsAsync();
+        
+        return _mapper.Map<List<MeasurementResponse>>(measurementList);
     }
 }

@@ -31,4 +31,13 @@ public class MeasurementRepository : IMeasurementRepository
         
         return entity.Entity;
     }
+
+    public Task<List<Measurement>> GetAllMeasurementsAsync()
+    {
+        // Monitoring and Logging
+        Monitoring.ActivitySource.StartActivity("GetAllMeasurementsAsync");
+        Monitoring.Log.Debug("Getting all Measurements");
+        
+        return Task.FromResult(_dbcontext.Measurements.ToList());
+    }
 }
