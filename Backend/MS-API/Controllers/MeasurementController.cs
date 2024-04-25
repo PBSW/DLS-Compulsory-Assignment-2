@@ -50,4 +50,22 @@ public class MeasurementController : ControllerBase
             return BadRequest(e.Message);
         }
     }
+    
+    [HttpGet]
+    [Route("api/measurement/{id}")]
+    public async Task<IActionResult> GetMeasurementBySSNAsync([FromQuery] string ssn)
+    {
+        // Monitoring and Logging
+        Monitoring.ActivitySource.StartActivity("GetMeasurementByIdAsync");
+        Monitoring.Log.Debug("Getting Measurement by ID");
+        
+        try
+        {
+            return Ok(await _service.GetMeasurementBySSNAsync(ssn));
+        } catch (Exception e)
+        {
+            Monitoring.Log.Error(e.Message);
+            return BadRequest(e.Message);
+        }
+    }
 }
