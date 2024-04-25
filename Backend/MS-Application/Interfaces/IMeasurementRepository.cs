@@ -6,4 +6,5 @@ public interface IMeasurementRepository
 {
     public Task<Measurement> CreateMeasurementAsync(Measurement measurement);
     public Task<List<Measurement>> GetAllMeasurementsAsync();
+    public Task<List<Measurement>> GetPatientMeasurementsAsync(string ssn);
 }

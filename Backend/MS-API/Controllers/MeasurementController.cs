@@ -53,7 +53,7 @@ public class MeasurementController : ControllerBase
     
     [HttpGet]
     [Route("api/measurement/{id}")]
-    public async Task<IActionResult> GetMeasurementBySSNAsync([FromQuery] string ssn)
+    public async Task<IActionResult> GetPatientMeasurementsBySSNAsync([FromRoute] string ssn)
     {
         // Monitoring and Logging
         Monitoring.ActivitySource.StartActivity("GetMeasurementByIdAsync");
@@ -61,7 +61,7 @@ public class MeasurementController : ControllerBase
         
         try
         {
-            return Ok(await _service.GetMeasurementBySSNAsync(ssn));
+            return Ok(await _service.GetPatientMeasurementsBySSNAsync(ssn));
         } catch (Exception e)
         {
             Monitoring.Log.Error(e.Message);

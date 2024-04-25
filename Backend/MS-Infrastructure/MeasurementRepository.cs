@@ -1,4 +1,5 @@
-﻿using MS_Application.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using MS_Application.Interfaces;
 using Shared;
 using Shared.Monitoring;
 
@@ -32,12 +33,21 @@ public class MeasurementRepository : IMeasurementRepository
         return entity.Entity;
     }
 
-    public Task<List<Measurement>> GetAllMeasurementsAsync()
+    public async Task<List<Measurement>> GetAllMeasurementsAsync()
     {
         // Monitoring and Logging
         Monitoring.ActivitySource.StartActivity("GetAllMeasurementsAsync");
         Monitoring.Log.Debug("Getting all Measurements");
         
-        return Task.FromResult(_dbcontext.Measurements.ToList());
+        return await _dbcontext.Measurements.ToListAsync();
+    }
+
+    public async Task<List<Measurement>> GetPatientMeasurementsAsync(string ssn)
+    {
+        // Monitoring and Logging
+        Monitoring.ActivitySource.StartActivity("GetPatientMeasurementsAsync");
+        Monitoring.Log.Debug("Getting Patient Measurements by SSN");
+        
+        return await _dbcontext.Measurements.Where(m => m.PatientSSN == ssn).ToListAsync();
     }
 }

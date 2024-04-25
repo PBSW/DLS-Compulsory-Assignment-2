@@ -141,18 +141,18 @@ public class MeasurementServiceTests
         await action.Should().NotThrowAsync();
     }
     
-    // Measurement GetAllBySSN Tests
+    // Measurement GetBySSN Tests
     [Fact]
-    public async void GetAllMeasurementsBySSN_ShouldReturnValidMeasurementList()
+    public async void GetPatientMeasurementsBySSN_ShouldReturnValidMeasurementList()
     {
         // Setup
         var setup = CreateServiceSetup();
         var service = setup.CreateService();
         
-        setup.GetMockRepo().Setup(x => x.GetAllMeasurementsBySSNAsync()).ReturnsAsync(new List<Measurement>());
+        setup.GetMockRepo().Setup(x => x.GetPatientMeasurementsAsync().ReturnsAsync(new List<Measurement>());
         
         // Act
-        Func<Task> action = () => service.GetAllMeasurementsBySSNAsync();
+        Func<Task> action = () => service.GetPatientMeasurementsAsync("0123456789");
         
         // Assert
         await action.Should().NotThrowAsync();
