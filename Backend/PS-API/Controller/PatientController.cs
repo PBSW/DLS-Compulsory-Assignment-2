@@ -9,16 +9,16 @@ namespace PS_API.Controller;
 [ApiController]
 public class PatientController : ControllerBase
 {
-    private readonly IPatientService _patientService;
+    private readonly IPatientService _service;
 
-    public PatientController(IPatientService patientService)
+    public PatientController(IPatientService service)
     {
-        _patientService = patientService;
+        _service = service;
     }
-
-    [Route("api/patient")]
+    
     [HttpPost]
-    public async Task<IActionResult> CreatePatientAsync(PatientCreate request)
+    [Route("api/patient")]
+    public async Task<IActionResult> CreatePatientAsync([FromBody] PatientCreate request)
     {
         // Monitoring and Logging
         Monitoring.ActivitySource.StartActivity("CreatePatientAsync");
@@ -26,7 +26,7 @@ public class PatientController : ControllerBase
 
         try
         {
-            return Ok(await _patientService.CreatePatientAsync(request));
+            return Ok(await _service.CreatePatientAsync(request));
         }
         catch (Exception e)
         {
@@ -35,8 +35,9 @@ public class PatientController : ControllerBase
         }
     }
 
-    [Route("api/patient")]
+    
     [HttpGet]
+    [Route("api/patient")]
     public async Task<IActionResult> GetAllPatientsAsync()
     {
         // Monitoring and Logging
@@ -45,7 +46,7 @@ public class PatientController : ControllerBase
 
         try
         {
-            return Ok(await _patientService.GetAllPatientsAsync());
+            return Ok(await _service.GetAllPatientsAsync());
         }
         catch (Exception e)
         {
@@ -53,10 +54,10 @@ public class PatientController : ControllerBase
             return BadRequest(e.Message);
         }
     }
-
-    [Route("api/patient")]
+    
     [HttpDelete]
-    public async Task<IActionResult> DeletePatientAsync(PatientDelete request)
+    [Route("api/patient")]
+    public async Task<IActionResult> DeletePatientAsync([FromBody] PatientDelete request)
     {
         // Monitoring and Logging
         Monitoring.ActivitySource.StartActivity("DeletePatientAsync");
@@ -64,7 +65,7 @@ public class PatientController : ControllerBase
 
         try
         {
-            return Ok(await _patientService.DeletePatientAsync(request));
+            return Ok(await _service.DeletePatientAsync(request));
         }
         catch (Exception e)
         {

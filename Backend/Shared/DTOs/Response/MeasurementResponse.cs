@@ -1,6 +1,6 @@
-﻿namespace Shared;
+﻿namespace Shared.DTOs.Response;
 
-public class Measurement
+public class MeasurementResponse
 {
     public int Id { get; set; }
     public DateTime date { get; set; }
