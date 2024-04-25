@@ -8,6 +8,8 @@ import { PatientSeenPipe } from '../core/pipes/patient-seen.pipe';
 import { calcAge } from '../core/helpers/age-calc';
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { PatientCreateModalComponent } from './patient-create-modal/patient-create-modal.component';
+import { DomSanitizer } from '@angular/platform-browser';
+import { PatientService } from '../services/patient.service';
 
 @Component({
   selector: 'app-patient-view',
@@ -28,6 +30,8 @@ export class PatientViewComponent {
   searchText: string = '';
 
   private modalService = inject(NgbModal);
+  private sanitizer = inject(DomSanitizer);
+  private patientService = inject(PatientService);
 
   viewingPatient: Patient | null = null;
 
@@ -35,11 +39,10 @@ export class PatientViewComponent {
     {
       mail: 'mail1@mail.com',
       measurements: [
-        { date: new Date(), seen: false, diastolic: 60, systolic: 100, id: 0},
+        { date: new Date(), seen: false, diastolic: 60, systolic: 100, id: 0 },
         { date: new Date(), seen: false, diastolic: 80, systolic: 120, id: 1 },
         { date: new Date(), seen: true, diastolic: 90, systolic: 130, id: 2 },
         { date: new Date(), seen: false, diastolic: 100, systolic: 140, id: 3 },
-
       ],
       name: 'John Doe',
       ssn: '160499-1234',
@@ -104,6 +107,10 @@ export class PatientViewComponent {
     return calcAge(ssn);
   }
 
+  getSafeUrl(url: string) {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
   selectPatient(patient: Patient) {
     if (this.viewingPatient === patient) {
       this.viewingPatient = null;
@@ -119,7 +126,30 @@ export class PatientViewComponent {
   }
 
   newPatient() {
-    const modalRef = this.modalService.open(PatientCreateModalComponent, { centered: true });
+    const modalRef = this.modalService.open(PatientCreateModalComponent, {
+      centered: true,
+    });
+
+    modalRef.result.then((newPatient: Patient) => {
+      if (!newPatient) {
+        return;
+      }
+      this.patientService.addPatient(newPatient).subscribe(
+        (response) => {
+          this.patientCollection.push(response);
+        },
+      );
+    });
   }
 
+  onPatientDeleted(patient: Patient) {
+    this.patientService.deletePatient(patient.ssn).subscribe((reponse) => {
+      if (reponse) {
+        this.patientCollection = this.patientCollection.filter(
+          (p) => p !== patient
+        );
+        this.viewingPatient = null;
+      }
+    });
+  }
 }

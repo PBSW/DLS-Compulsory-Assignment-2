@@ -1,10 +1,11 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { Measurement, MeasurementGrade, Patient } from '../../core/domain/domain';
 import { calcAge } from '../../core/helpers/age-calc';
 import { CommonModule } from '@angular/common';
 import { PatientService } from '../../services/patient.service';
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { PatientDeleteModalComponent } from '../patient-delete-modal/patient-delete-modal.component';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-measurements',
@@ -16,14 +17,19 @@ import { PatientDeleteModalComponent } from '../patient-delete-modal/patient-del
 export class MeasurementsComponent {
 
   @Input() patient: Patient | null = null;
+  @Output() deletePatientEvent = new EventEmitter<Patient>();
   private modalService = inject(NgbModal);
 
-  constructor(private patientService: PatientService) { }
+  constructor(
+    private patientService: PatientService,
+    private sanitizer: DomSanitizer
+  ) { }
 
 
 
   markAsSeen(measurements: Measurement) {
     this.patientService.markMeasurementAsSeen(this.patient?.ssn!, measurements.id);
+    //TODO: Implement this
     measurements.seen = true;
   }
 
@@ -35,14 +41,15 @@ export class MeasurementsComponent {
     return calcAge(ssn);
   }
 
-  deletePatient(patient: Patient) {
-    this.patientService.deletePatient(patient.ssn);
-  }
+
 
   openDeleteModal(patient: Patient) {
     const modalRef =this.modalService.open(PatientDeleteModalComponent, { centered: true });
     modalRef.result.then((bool) => {
-      if (bool) this.deletePatient(patient);
+      if (bool) {
+        console.log('Delete patient');
+        this.deletePatientEvent.emit(patient);
+      }
     });
   }
 
@@ -50,6 +57,11 @@ export class MeasurementsComponent {
 
 
   averageMeasurement(): string {
+
+    if (!this.patient?.measurements.length) {
+      return 'No measurements';
+    }
+
     let systolicSum = 0;
     let diastolicSum = 0;
 
@@ -86,6 +98,10 @@ export class MeasurementsComponent {
 
   get EMeasurementGrade() {
     return MeasurementGrade;
+  }
+
+  getSafeUrl(url: string): any {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
 }

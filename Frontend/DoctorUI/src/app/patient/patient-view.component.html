@@ -70,7 +70,7 @@
             </h6>
             <span class="p-0 m-0 h6">
               <i class="fa-solid fa-envelope me-1"></i>
-              <a class="h6" href="mailto:{{ patient.mail }}">{{
+              <a class="h6" [href]="getSafeUrl('mailto:' + patient.mail)">{{
                 patient.mail
               }}</a>
             </span>
@@ -78,7 +78,7 @@
         </div>
       </div>
     </div>
-    <app-measurements class="h-100 " [patient]="viewingPatient"> </app-measurements>
+    <app-measurements class="h-100 " (deletePatientEvent)="onPatientDeleted($event)" [patient]="viewingPatient"> </app-measurements>
   </div>
 </div>
 

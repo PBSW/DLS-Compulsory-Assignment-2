@@ -23,18 +23,28 @@ export class PatientCreateModalComponent {
     measurements: []
   };
 
-  constructor() { }
+  constructor() {
+  }
+
+
 
   _createFromGroup(): FormGroup {
+    const regex: RegExp = new RegExp('^(0[1-9]|[12]\\d|3[01])(0[1-9]|1[0-2])\\d{2}[-]?\\d{4}$');
+
     return new FormGroup({
-      ssn: new FormControl('', Validators.required),
-      name: new FormControl('', Validators.required),
+      ssn: new FormControl('', [Validators.required, Validators.pattern(regex)]),
+      firstname: new FormControl('', [Validators.required]),
+      lastname: new FormControl('', [Validators.required]),
       email: new FormControl('', [Validators.required, Validators.email]),
     });
   }
 
 
   create() {
+    this.newPatient.ssn = this.formGroup.get('ssn')?.value;
+    this.newPatient.name = this.formGroup.get('firstname')?.value + ' ' + this.formGroup.get('lastname')?.value;
+    this.newPatient.mail = this.formGroup.get('email')?.value;
+
     this.activeModal.close(this.newPatient);
   }
 

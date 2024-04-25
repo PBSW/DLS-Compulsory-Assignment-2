@@ -6,24 +6,46 @@
 <div class="modal-body">
   <!-- Create form -->
   <form [formGroup]="formGroup" (ngSubmit)="create()">
-    <div class="mb-3">
-      <label for="name" class="form-label">Name</label>
-      <input
-        type="text"
-        class="form-control"
-        id="name"
-        formControlName="name"
-        required
-      />
+    <div class="mb-3 d-flex flex-row justify-content-between">
+      <div class="w-50 me-1">
+        <label for="firstname" class="form-label">Firstname</label>
+        <input
+          type="text"
+          class="form-control"
+          id="firstname"
+          formControlName="firstname"
+          required
+        />
 
-      <div
-        *ngIf="
-          formGroup.get('name')?.hasError('required') &&
-          formGroup.get('name')?.touched
-        "
-        class="text-danger"
-      >
-        Name is required
+        <div
+          *ngIf="
+            formGroup.get('firstname')?.hasError('required') &&
+            formGroup.get('firstname')?.touched
+          "
+          class="text-danger"
+        >
+          Firstname is required
+        </div>
+      </div>
+      <div class="w-50 ms-1 ">
+        <label for="lastname" class="form-label">Lastname</label>
+        <input
+          type="text"
+          class="form-control"
+          id="lastname"
+          formControlName="lastname"
+          required
+        />
+
+        <div
+          *ngIf="
+            formGroup.get('lastname')?.hasError('required') &&
+            formGroup.get('lastname')?.touched
+          "
+          class="text-danger"
+        >
+          Lastname is required
+        </div>
       </div>
     </div>
 
@@ -39,12 +61,12 @@
 
       <div
         *ngIf="
-          formGroup.get('ssn')?.hasError('required') &&
+          formGroup.get('ssn')?.hasError('pattern') &&
           formGroup.get('ssn')?.touched
         "
         class="text-danger"
       >
-        SSN is required
+        SSN is required and must be valid
       </div>
     </div>
 
@@ -60,16 +82,16 @@
 
       <div
         *ngIf="
-          formGroup.get('email')?.hasError('required') &&
-          formGroup.get('email')?.touched
+          (formGroup.get('email')?.hasError('required') &&
+            formGroup.get('email')?.touched) ||
+          (formGroup.get('email')?.hasError('email') &&
+            formGroup.get('email')?.touched)
         "
         class="text-danger"
       >
-        SSN is required
+        Email is required
       </div>
     </div>
-
-
 
     <div class="modal-footer">
       <button
@@ -80,9 +102,8 @@
         Close
       </button>
       <button
-        type="button"
+        type="submit"
         class="btn btn-outline-secondary"
-        (click)="activeModal.close(true)"
       >
         Create
       </button>
