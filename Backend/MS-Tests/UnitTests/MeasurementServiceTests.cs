@@ -124,6 +124,40 @@ public class MeasurementServiceTests
         await action.Should().ThrowAsync<ValidationException>().WithMessage(errorMessage);
     }
     
+    // Meausrement GetAll Tests
+    [Fact]
+    public async void GetAllMeasurements_ShouldReturnValidMeasurementList()
+    {
+        // Setup
+        var setup = CreateServiceSetup();
+        var service = setup.CreateService();
+        
+        setup.GetMockRepo().Setup(x => x.GetAllMeasurementsAsync()).ReturnsAsync(new List<Measurement>());
+        
+        // Act
+        Func<Task> action = () => service.GetAllMeasurementsAsync();
+        
+        // Assert
+        await action.Should().NotThrowAsync();
+    }
+    
+    // Measurement GetAllBySSN Tests
+    [Fact]
+    public async void GetAllMeasurements_ShouldReturnValidMeasurementList()
+    {
+        // Setup
+        var setup = CreateServiceSetup();
+        var service = setup.CreateService();
+        
+        setup.GetMockRepo().Setup(x => x.GetAllMeasurementsBySSNAsync()).ReturnsAsync(new List<Measurement>());
+        
+        // Act
+        Func<Task> action = () => service.GetAllMeasurementsBySSNAsync();
+        
+        // Assert
+        await action.Should().NotThrowAsync();
+    }
+    
     // Helper Classes and Methods
     private ServiceSetup CreateServiceSetup()
     {
