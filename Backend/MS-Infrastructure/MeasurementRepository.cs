@@ -50,4 +50,22 @@ public class MeasurementRepository : IMeasurementRepository
         
         return await _dbcontext.Measurements.Where(m => m.PatientSSN == ssn).ToListAsync();
     }
+
+    public async Task<Measurement> UpdateMeasurementAsync(Measurement measurement)
+    {
+        // Monitoring and Logging
+        Monitoring.ActivitySource.StartActivity("UpdateMeasurementAsync");
+        Monitoring.Log.Debug("Updating Measurement");
+        
+        var entity = _dbcontext.Measurements.Update(measurement);
+        int change = await _dbcontext.SaveChangesAsync();
+        
+        if (change == 0)
+        {
+            Monitoring.Log.Error("No changes were made to the database");
+            throw new Exception("No changes were made to the database");
+        }
+        
+        return entity.Entity;
+    }
 }

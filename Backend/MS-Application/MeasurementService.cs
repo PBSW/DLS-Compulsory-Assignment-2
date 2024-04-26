@@ -4,6 +4,7 @@ using MS_Application.Interfaces;
 using Shared;
 using Shared.DTOs.Create;
 using Shared.DTOs.Response;
+using Shared.DTOs.Update;
 using Shared.Monitoring;
 
 namespace MS_Application;
@@ -56,6 +57,32 @@ public class MeasurementService : IMeasurementService
         var measurements = await _repo.GetAllMeasurementsAsync();
         
         return _mapper.Map<List<MeasurementResponse>>(measurements);
+    }
+
+    public async Task<MeasurementResponse> UpdateMeasurementAsync(MeasurementUpdate request)
+    {
+        // Monitoring and Logging
+        Monitoring.ActivitySource.StartActivity("UpdateMeasurementAsync");
+        Monitoring.Log.Debug("Updating Measurement");
+        
+        if (request == null)
+        {
+            Monitoring.Log.Error("MeasurementUpdate is null");
+            throw new NullReferenceException("MeasurementUpdate is null");
+        }
+        
+        var measurement = _mapper.Map<Measurement>(request);
+        
+        var validationResult = await _validator.ValidateAsync(measurement);
+        if (!validationResult.IsValid)
+        {
+            Monitoring.Log.Error(validationResult.ToString());
+            throw new ValidationException(validationResult.ToString());
+        }
+        
+        Measurement returnMeasurement = await _repo.UpdateMeasurementAsync(measurement);
+        
+        return _mapper.Map<MeasurementResponse>(returnMeasurement);
     }
 
     public async Task<List<MeasurementResponse>> GetPatientMeasurementsAsync(string ssn)

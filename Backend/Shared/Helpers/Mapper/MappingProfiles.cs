@@ -3,6 +3,7 @@ using Shared.DTOs.Create;
 using Shared.DTOs.Delete;
 using Shared.DTOs.Requests;
 using Shared.DTOs.Response;
+using Shared.DTOs.Update;
 
 namespace Shared.Helpers.Mapper;
 
@@ -18,5 +19,7 @@ public class MappingProfiles : Profile
         // Measurement Mapping
         CreateMap<MeasurementCreate, Measurement>();
         CreateMap<Measurement, MeasurementResponse>();
+        CreateMap<MeasurementUpdate, Measurement>();
+        
     }
 }

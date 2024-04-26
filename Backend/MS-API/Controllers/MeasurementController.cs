@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MS_Application.Interfaces;
 using Shared.DTOs.Create;
+using Shared.DTOs.Update;
 using Shared.Monitoring;
 
 namespace MS_API.Controllers;
@@ -62,6 +63,24 @@ public class MeasurementController : ControllerBase
         try
         {
             return Ok(await _service.GetPatientMeasurementsAsync(ssn));
+        } catch (Exception e)
+        {
+            Monitoring.Log.Error(e.Message);
+            return BadRequest(e.Message);
+        }
+    }
+    
+    [HttpPut]
+    [Route("api/measurement")]
+    public async Task<IActionResult> UpdateMeasurementAsync([FromBody] MeasurementUpdate request)
+    {
+        // Monitoring and Logging
+        Monitoring.ActivitySource.StartActivity("UpdateMeasurementAsync");
+        Monitoring.Log.Debug("Updating Measurement");
+        
+        try
+        {
+            return Ok(await _service.UpdateMeasurementAsync(request));
         } catch (Exception e)
         {
             Monitoring.Log.Error(e.Message);
