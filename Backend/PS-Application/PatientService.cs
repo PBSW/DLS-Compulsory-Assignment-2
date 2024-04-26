@@ -12,12 +12,14 @@ namespace PS_Application;
 public class PatientService : IPatientService
 {
     private readonly IPatientRepository _repo;
+    private readonly IPatientMeasurements _measurements;
     private readonly IMapper _mapper;
     private readonly IValidator<Patient> _validator;
     
-    public PatientService(IPatientRepository repo, IMapper mapper, IValidator<Patient> validator)
+    public PatientService(IPatientRepository repo, IPatientMeasurements measurements, IMapper mapper, IValidator<Patient> validator)
     {
         _repo = repo ?? throw new NullReferenceException("PatientService repository is null");
+        _measurements = measurements ?? throw new NullReferenceException("PatientService measurements is null");
         _mapper = mapper ?? throw new NullReferenceException("PatientService mapper is null");
         _validator = validator ?? throw new NullReferenceException("PatientService validator is null");
 
@@ -81,7 +83,8 @@ public class PatientService : IPatientService
         }
         
         Patient patient = await _repo.GetPatientBySSNAsync(ssn);
-
+        List<MeasurementResponse> measurements = await _measurements.GetMeasurementsAsync(ssn);
+        
         if (patient == null)
         {
             Monitoring.Log.Error("Patient from DB is null");
@@ -89,7 +92,8 @@ public class PatientService : IPatientService
         }
         
         PatientResponse response = _mapper.Map<PatientResponse>(patient);
-
+        response.Measurements = measurements;
+        
         return response;
     }
     

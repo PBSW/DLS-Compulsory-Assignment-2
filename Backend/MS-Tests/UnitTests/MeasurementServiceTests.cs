@@ -7,10 +7,9 @@ using MS_Application.Helpers;
 using MS_Application.Interfaces;
 using Shared;
 using Shared.DTOs.Create;
-using Shared.DTOs.Requests;
 using Shared.Helpers.Mapper;
 
-namespace MS_Tests;
+namespace MS_Tests.UnitTests;
 
 public class MeasurementServiceTests
 {
@@ -19,16 +18,25 @@ public class MeasurementServiceTests
     public void CreateService_WithNullRepo_ShouldThrowNullExceptionWithMessage()
     {
         Action action = () =>
-            new MeasurementService(null, new Mock<IMapper>().Object, new Mock<IValidator<Measurement>>().Object);
+            new MeasurementService(null, new Mock<IPatientCheck>().Object, new Mock<IMapper>().Object, new Mock<IValidator<Measurement>>().Object);
 
         action.Should().Throw<NullReferenceException>().WithMessage("MeasurementService repository is null");
     }
 
     [Fact]
+    public void CreateService_WithNullPatientCheck_ShouldThrowNullExceptionWithMessage()
+    {
+        Action action = () =>
+            new MeasurementService(new Mock<IMeasurementRepository>().Object, null, new Mock<IMapper>().Object, new Mock<IValidator<Measurement>>().Object);
+
+        action.Should().Throw<NullReferenceException>().WithMessage("MeasurementService patientcheck is null");
+    }
+    
+    [Fact]
     public void CreateService_WithNullAutoMapper_ShouldThrowNullExceptionWithMessage()
     {
         Action action = () =>
-            new MeasurementService(new Mock<IMeasurementRepository>().Object, null, new Mock<IValidator<Measurement>>().Object);
+            new MeasurementService(new Mock<IMeasurementRepository>().Object, new Mock<IPatientCheck>().Object, null, new Mock<IValidator<Measurement>>().Object);
 
         action.Should().Throw<NullReferenceException>().WithMessage("MeasurementService mapper is null");
     }
@@ -37,7 +45,7 @@ public class MeasurementServiceTests
     public void CreateService_WithNullFluentValidation_ShouldThrowNullExceptionWithMessage()
     {
         Action action = () =>
-            new MeasurementService(new Mock<IMeasurementRepository>().Object, new Mock<IMapper>().Object, null);
+            new MeasurementService(new Mock<IMeasurementRepository>().Object, new Mock<IPatientCheck>().Object, new Mock<IMapper>().Object, null);
 
         action.Should().Throw<NullReferenceException>().WithMessage("MeasurementService validator is null");
     }
@@ -45,7 +53,7 @@ public class MeasurementServiceTests
     [Fact]
     public void CreateService_WithValidParameters_ShouldNotThrowException()
     {
-        Action action = () => new MeasurementService(new Mock<IMeasurementRepository>().Object, new Mock<IMapper>().Object,
+        Action action = () => new MeasurementService(new Mock<IMeasurementRepository>().Object, new Mock<IPatientCheck>().Object, new Mock<IMapper>().Object,
             new Mock<IValidator<Measurement>>().Object);
 
         action.Should().NotThrow();
@@ -80,6 +88,7 @@ public class MeasurementServiceTests
         // Act
         Func<Task> action = () => service.CreateMeasurementAsync(measurementCreate);
         
+        setup.GetMockPatientCheck().Setup(x => x.CheckPatientExistsAsync("0123456789")).ReturnsAsync(true);
         // Assert
         await action.Should().NotThrowAsync();
     }
@@ -90,7 +99,7 @@ public class MeasurementServiceTests
         // Setup
         var setup = CreateServiceSetup();
         var service = setup.CreateService();
-
+        
         // Act
         Func<Task> action = () => service.CreateMeasurementAsync(null);
         
@@ -116,6 +125,8 @@ public class MeasurementServiceTests
             Systolic = 120,
             Diastolic = 80,
         };
+
+        setup.GetMockPatientCheck().Setup(x => x.CheckPatientExistsAsync(ssn)).ReturnsAsync(true);
         
         // Act
         Func<Task> action = () => service.CreateMeasurementAsync(measurement);
@@ -123,6 +134,31 @@ public class MeasurementServiceTests
         // Assert
         await action.Should().ThrowAsync<ValidationException>().WithMessage(errorMessage);
     }
+    
+    [Fact]
+    public async void CreateMeasurements_WithNonexistentPatient_ShouldThrowArugmentExceptionWithMessage()
+    {
+        // Setup
+        var setup = CreateServiceSetup();
+        var service = setup.CreateService();
+        
+        var measurement = new MeasurementCreate()
+        {
+            PatientSSN = "123456789",
+            Systolic = 120,
+            Diastolic = 80,
+        };
+        
+        setup.GetMockRepo().Setup(x => x.GetPatientMeasurementsAsync(measurement.PatientSSN)).ReturnsAsync(new List<Measurement>());
+        setup.GetMockPatientCheck().Setup(x => x.CheckPatientExistsAsync(measurement.PatientSSN)).ReturnsAsync(false);
+            
+        // Act
+        Func<Task> action = () => service.CreateMeasurementAsync(measurement);
+        
+        // Assert
+        await action.Should().ThrowAsync<ArgumentException>().WithMessage($"Patient with SSN {measurement.PatientSSN} does not exist");
+    }
+
     
     // Meausrement GetAll Tests
     [Fact]
@@ -151,8 +187,10 @@ public class MeasurementServiceTests
         
         string ssn = "0123456789";
         
-        setup.GetMockRepo().Setup(x => x.GetPatientMeasurementsAsync(ssn)).ReturnsAsync(new List<Measurement>());
         
+        setup.GetMockRepo().Setup(x => x.GetPatientMeasurementsAsync(ssn)).ReturnsAsync(new List<Measurement>());
+        setup.GetMockPatientCheck().Setup(x => x.CheckPatientExistsAsync(ssn)).ReturnsAsync(true);
+            
         // Act
         Func<Task> action = () => service.GetPatientMeasurementsAsync("0123456789");
         
@@ -164,22 +202,25 @@ public class MeasurementServiceTests
     private ServiceSetup CreateServiceSetup()
     {
         var measurementRepoMock = new Mock<IMeasurementRepository>();
+        var patientCheck = new Mock<IPatientCheck>();
         var mapperConfig = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfiles>());
         var mapper = mapperConfig.CreateMapper();
         var validator = new MeasurementValidators();
 
-        return new ServiceSetup(measurementRepoMock, mapper, validator);
+        return new ServiceSetup(measurementRepoMock, patientCheck, mapper, validator);
     }
 
     private class ServiceSetup
     {
         private Mock<IMeasurementRepository> _measurementRepositoryMock;
+        private Mock<IPatientCheck> _patientCheck;
         private IMapper _mapper;
         private IValidator<Measurement> _valdiator;
 
-        public ServiceSetup(Mock<IMeasurementRepository> measurementRepositoryMock, IMapper mapper, IValidator<Measurement> validator)
+        public ServiceSetup(Mock<IMeasurementRepository> measurementRepositoryMock, Mock<IPatientCheck> patientCheck, IMapper mapper, IValidator<Measurement> validator)
         {
             _measurementRepositoryMock = measurementRepositoryMock;
+            _patientCheck = patientCheck;
             _mapper = mapper;
             _valdiator = validator;
         }
@@ -189,10 +230,16 @@ public class MeasurementServiceTests
             return _measurementRepositoryMock;
         }
 
+        public Mock<IPatientCheck> GetMockPatientCheck()
+        {
+            return _patientCheck;
+        }
+        
         public MeasurementService CreateService()
         {
             return new MeasurementService(
                 _measurementRepositoryMock.Object,
+                _patientCheck.Object,
                 _mapper,
                 _valdiator
             );

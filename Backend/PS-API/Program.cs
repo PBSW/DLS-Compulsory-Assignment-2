@@ -21,6 +21,7 @@ builder.Services.AddDbContext<DatabaseContext>(options => options.UseMySql(
 // Dependency Resolvers
 builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IPatientRepository, PatientRepository>();
+builder.Services.AddScoped<IPatientMeasurements, PatientMeasurements>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

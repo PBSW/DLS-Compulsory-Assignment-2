@@ -21,16 +21,25 @@ public class PatientServiceTests
     public void CreateService_WithNullRepo_ShouldThrowNullExceptionWithMessage()
     {
         Action action = () =>
-            new PatientService(null, new Mock<IMapper>().Object, new Mock<IValidator<Patient>>().Object);
+            new PatientService(null, new Mock<IPatientMeasurements>().Object, new Mock<IMapper>().Object, new Mock<IValidator<Patient>>().Object);
 
         action.Should().Throw<NullReferenceException>().WithMessage("PatientService repository is null");
     }
 
     [Fact]
+    public void CreateService_WithNullPatientCheck_ShouldThrowNullExceptionWithMessage()
+    {
+        Action action = () =>
+            new PatientService(new Mock<IPatientRepository>().Object, null, new Mock<IMapper>().Object, new Mock<IValidator<Patient>>().Object);
+
+        action.Should().Throw<NullReferenceException>().WithMessage("PatientService measurements is null");
+    }
+    
+    [Fact]
     public void CreateService_WithNullAutoMapper_ShouldThrowNullExceptionWithMessage()
     {
         Action action = () =>
-            new PatientService(new Mock<IPatientRepository>().Object, null, new Mock<IValidator<Patient>>().Object);
+            new PatientService(new Mock<IPatientRepository>().Object, new Mock<IPatientMeasurements>().Object, null, new Mock<IValidator<Patient>>().Object);
 
         action.Should().Throw<NullReferenceException>().WithMessage("PatientService mapper is null");
     }
@@ -39,7 +48,7 @@ public class PatientServiceTests
     public void CreateService_WithNullFluentValidation_ShouldThrowNullExceptionWithMessage()
     {
         Action action = () =>
-            new PatientService(new Mock<IPatientRepository>().Object, new Mock<IMapper>().Object, null);
+            new PatientService(new Mock<IPatientRepository>().Object, new Mock<IPatientMeasurements>().Object, new Mock<IMapper>().Object, null);
 
         action.Should().Throw<NullReferenceException>().WithMessage("PatientService validator is null");
     }
@@ -47,7 +56,7 @@ public class PatientServiceTests
     [Fact]
     public void CreateService_WithValidParameters_ShouldNotThrowException()
     {
-        Action action = () => new PatientService(new Mock<IPatientRepository>().Object, new Mock<IMapper>().Object,
+        Action action = () => new PatientService(new Mock<IPatientRepository>().Object, new Mock<IPatientMeasurements>().Object, new Mock<IMapper>().Object,
             new Mock<IValidator<Patient>>().Object);
 
         action.Should().NotThrow();
@@ -254,22 +263,25 @@ public class PatientServiceTests
     private ServiceSetup CreateServiceSetup()
     {
         var patientRepoMock = new Mock<IPatientRepository>();
+        var patientMeasurementMock = new Mock<IPatientMeasurements>();
         var mapperConfig = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfiles>());
         var mapper = mapperConfig.CreateMapper();
         var validator = new PatientValidators();
 
-        return new ServiceSetup(patientRepoMock, mapper, validator);
+        return new ServiceSetup(patientRepoMock, patientMeasurementMock, mapper, validator);
     }
 
     private class ServiceSetup
     {
         private Mock<IPatientRepository> _patientRepositoryMock;
+        private Mock<IPatientMeasurements> _patientMeasurementsMock;
         private IMapper _mapper;
         private IValidator<Patient> _valdiator;
 
-        public ServiceSetup(Mock<IPatientRepository> patientRepositoryMock, IMapper mapper, IValidator<Patient> validator)
+        public ServiceSetup(Mock<IPatientRepository> patientRepositoryMock, Mock<IPatientMeasurements> patientMeasurementsMock, IMapper mapper, IValidator<Patient> validator)
         {
             _patientRepositoryMock = patientRepositoryMock;
+            _patientMeasurementsMock = patientMeasurementsMock;
             _mapper = mapper;
             _valdiator = validator;
         }
@@ -283,6 +295,7 @@ public class PatientServiceTests
         {
             return new PatientService(
                 _patientRepositoryMock.Object,
+                _patientMeasurementsMock.Object,
                 _mapper,
                 _valdiator
             );
