@@ -23,8 +23,13 @@ public class MeasurementService : IMeasurementService
 
     public async Task<MeasurementResponse> CreateMeasurementAsync(MeasurementCreate request)
     {
+        // Monitoring and Logging
+        Monitoring.ActivitySource.StartActivity("CreateMeasurementAsync");
+        Monitoring.Log.Debug("Creating Measurement");
+        
         if (request == null)
         {
+            Monitoring.Log.Error("MeasurementCreate is null");
             throw new NullReferenceException("MeasurementCreate is null");
         }
         
@@ -33,6 +38,7 @@ public class MeasurementService : IMeasurementService
         var validationResult = await _validator.ValidateAsync(measurement);
         if (!validationResult.IsValid)
         {
+            Monitoring.Log.Error(validationResult.ToString());
             throw new ValidationException(validationResult.ToString());
         }
         

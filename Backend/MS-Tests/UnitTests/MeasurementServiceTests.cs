@@ -149,7 +149,9 @@ public class MeasurementServiceTests
         var setup = CreateServiceSetup();
         var service = setup.CreateService();
         
-        setup.GetMockRepo().Setup(x => x.GetPatientMeasurementsAsync().ReturnsAsync(new List<Measurement>());
+        string ssn = "0123456789";
+        
+        setup.GetMockRepo().Setup(x => x.GetPatientMeasurementsAsync(ssn)).ReturnsAsync(new List<Measurement>());
         
         // Act
         Func<Task> action = () => service.GetPatientMeasurementsAsync("0123456789");
