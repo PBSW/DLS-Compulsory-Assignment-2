@@ -53,6 +53,8 @@ public class MeasurementService : IMeasurementService
             throw new ValidationException(validationResult.ToString());
         }
         
+        measurement.date = DateTime.Now;
+        
         Measurement returnMeasurement = await _repo.CreateMeasurementAsync(measurement);
         
         return _mapper.Map<MeasurementResponse>(returnMeasurement);
