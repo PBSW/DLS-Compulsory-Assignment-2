@@ -32,4 +32,40 @@ public class MeasurementController : ControllerBase
             return BadRequest(e.Message);
         }
     }
+    
+    [HttpGet]
+    [Route("api/measurement")]
+    public async Task<IActionResult> GetAllMeasurementsAsync()
+    {
+        // Monitoring and Logging
+        Monitoring.ActivitySource.StartActivity("GetAllMeasurementsAsync");
+        Monitoring.Log.Debug("Getting all Measurements");
+        
+        try
+        {
+            return Ok(await _service.GetAllMeasurementsAsync());
+        } catch (Exception e)
+        {
+            Monitoring.Log.Error(e.Message);
+            return BadRequest(e.Message);
+        }
+    }
+    
+    [HttpGet]
+    [Route("api/measurement/{ssn}")]
+    public async Task<IActionResult> GetPatientMeasurementsBySSNAsync([FromRoute] string ssn)
+    {
+        // Monitoring and Logging
+        Monitoring.ActivitySource.StartActivity("GetMeasurementByIdAsync");
+        Monitoring.Log.Debug("Getting Measurement by SSN");
+        
+        try
+        {
+            return Ok(await _service.GetPatientMeasurementsAsync(ssn));
+        } catch (Exception e)
+        {
+            Monitoring.Log.Error(e.Message);
+            return BadRequest(e.Message);
+        }
+    }
 }

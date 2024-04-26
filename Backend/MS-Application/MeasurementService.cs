@@ -4,6 +4,7 @@ using MS_Application.Interfaces;
 using Shared;
 using Shared.DTOs.Create;
 using Shared.DTOs.Response;
+using Shared.Monitoring;
 
 namespace MS_Application;
 
@@ -22,8 +23,13 @@ public class MeasurementService : IMeasurementService
 
     public async Task<MeasurementResponse> CreateMeasurementAsync(MeasurementCreate request)
     {
+        // Monitoring and Logging
+        Monitoring.ActivitySource.StartActivity("CreateMeasurementAsync");
+        Monitoring.Log.Debug("Creating Measurement");
+        
         if (request == null)
         {
+            Monitoring.Log.Error("MeasurementCreate is null");
             throw new NullReferenceException("MeasurementCreate is null");
         }
         
@@ -32,11 +38,34 @@ public class MeasurementService : IMeasurementService
         var validationResult = await _validator.ValidateAsync(measurement);
         if (!validationResult.IsValid)
         {
+            Monitoring.Log.Error(validationResult.ToString());
             throw new ValidationException(validationResult.ToString());
         }
         
         Measurement returnMeasurement = await _repo.CreateMeasurementAsync(measurement);
         
         return _mapper.Map<MeasurementResponse>(returnMeasurement);
+    }
+
+    public async Task<List<MeasurementResponse>> GetAllMeasurementsAsync()
+    {
+        // Monitoring and Logging
+        Monitoring.ActivitySource.StartActivity("GetAllMeasurementsAsync");
+        Monitoring.Log.Debug("Getting all Measurements");
+        
+        var measurements = await _repo.GetAllMeasurementsAsync();
+        
+        return _mapper.Map<List<MeasurementResponse>>(measurements);
+    }
+
+    public async Task<List<MeasurementResponse>> GetPatientMeasurementsAsync(string ssn)
+    {
+        // Monitoring and Logging
+        Monitoring.ActivitySource.StartActivity("GetPatientMeasurementsAsync");
+        Monitoring.Log.Debug("Getting Patient Measurements by SSN");
+        
+        var measurements = await _repo.GetPatientMeasurementsAsync(ssn);
+        
+        return _mapper.Map<List<MeasurementResponse>>(measurements);
     }
 }
