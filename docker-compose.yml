@@ -71,7 +71,7 @@ services:
             - patient_db:/var/lib/mysql
         
     measurement-database:
-        container_name: dls-2-measurement_db
+        container_name: dls-2-measurement-db
         image: mysql:5.7
         environment:
             MYSQL_ROOT_PASSWORD: root
