@@ -9,4 +9,5 @@ public interface IPatientService
     public Task<PatientResponse> CreatePatientAsync(PatientCreate request);
     public Task<bool> DeletePatientAsync(PatientDelete request);
     public Task<List<PatientResponse>> GetAllPatientsAsync();
+    public Task<bool> IsPatientAsync(string ssn);
 }

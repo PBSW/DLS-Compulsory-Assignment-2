@@ -57,21 +57,22 @@ public class PatientController : ControllerBase
     
     [HttpGet]
     [Route("api/patient/{ssn}")]
-    public async Task<IActionResult> GetPatientAsync(string ssn)
+    public async Task<IActionResult> IsPatientAsync(string ssn)
     {
         // Monitoring and Logging
-        Monitoring.ActivitySource.StartActivity("GetPatientAsync");
-        Monitoring.Log.Debug("Getting Patient by SSN");
+        Monitoring.ActivitySource.StartActivity("IsPatientAsync");
+        Monitoring.Log.Debug("Checking if Patient exists");
 
         try
         {
-            return Ok(await _service.GetPatientAsync(ssn));
+            return Ok(await _service.IsPatientAsync(ssn));
         }
         catch (Exception e)
         {
             Monitoring.Log.Error(e.Message);
             return BadRequest(e.Message);
         }
+
     }
     
     [HttpDelete]
