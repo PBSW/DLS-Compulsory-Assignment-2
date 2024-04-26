@@ -1,5 +1,4 @@
-﻿using System.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Shared;
 
 namespace PS_Infrastructure;
@@ -14,15 +13,21 @@ public class DatabaseContext : DbContext
         modelBuilder.Entity<Patient>()
             .HasKey(p => p.Ssn);
         
+
+        // Unique
+        modelBuilder.Entity<Patient>()
+            .HasIndex(p => p.Ssn)
+            .IsUnique();
+        
+        modelBuilder.Entity<Patient>()
+            .HasIndex(p => p.Mail)
+            .IsUnique();
+        
         //Properties
         modelBuilder.Entity<Patient>()
             .Property(p => p.Ssn)
             .IsRequired()
             .HasColumnType("varchar(10)");
-
-        modelBuilder.Entity<Patient>()
-            .HasIndex(p => p.Ssn)
-            .IsUnique();
         
         modelBuilder.Entity<Patient>()
             .Property(p => p.Mail)

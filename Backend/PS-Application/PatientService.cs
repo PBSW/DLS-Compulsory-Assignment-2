@@ -68,6 +68,48 @@ public class PatientService : IPatientService
         return patientResponseList;
     }
     
+    public async Task<PatientResponse> GetPatientBySSNAsync(string ssn)
+    {
+        // Monitoring and Logging
+        using var activity = Monitoring.ActivitySource.StartActivity("GetPatientBySSNAsync");
+        Monitoring.Log.Debug("Getting Patient by SSN");
+
+        if (string.IsNullOrEmpty(ssn))
+        {
+            Monitoring.Log.Error("SSN is invalid");
+            throw new NullReferenceException("SSN is invalid");
+        }
+        
+        Patient patient = await _repo.GetPatientBySSNAsync(ssn);
+
+        if (patient == null)
+        {
+            Monitoring.Log.Error("Patient from DB is null");
+            throw new NullReferenceException("Patient from DB is null");
+        }
+        
+        PatientResponse response = _mapper.Map<PatientResponse>(patient);
+
+        return response;
+    }
+    
+    public async Task<bool> IsPatientAsync(string ssn)
+    {
+        // Monitoring and Logging
+        using var activity = Monitoring.ActivitySource.StartActivity("IsPatientAsync");
+        Monitoring.Log.Debug("Checking if Patient exists");
+
+        if (string.IsNullOrEmpty(ssn))
+        {
+            Monitoring.Log.Error("SSN is invalid");
+            throw new NullReferenceException("SSN is invalid");
+        }
+        
+        bool action = await _repo.IsPatientAsync(ssn);
+
+        return action;
+    }
+    
     public async Task<bool> DeletePatientAsync(PatientDelete request)
     {
         // Monitoring and Logging

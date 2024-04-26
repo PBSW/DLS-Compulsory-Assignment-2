@@ -1,4 +1,3 @@
-using System.Reflection;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using PS_Application;
@@ -15,8 +14,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 
 //Database
-builder.Services.AddDbContext<DatabaseContext>(options => options.UseSqlite(
-    "Data source=db.db"
+builder.Services.AddDbContext<DatabaseContext>(options => options.UseMySql(
+    builder.Configuration.GetConnectionString("DefaultConnection"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
 ));
 
 // Dependency Resolvers
