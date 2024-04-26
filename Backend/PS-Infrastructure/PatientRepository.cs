@@ -49,6 +49,15 @@ public class PatientRepository : IPatientRepository
         return await _dbcontext.Patients.ToListAsync();
     }
     
+    public async Task<Patient> GetPatientBySSNAsync(string ssn)
+    {
+        // Monitoring and Logging
+        using var activity = Monitoring.ActivitySource.StartActivity("GetPatientBySSNAsync");
+        Monitoring.Log.Debug("Getting Patient by SSN from Database");
+
+        return await _dbcontext.Patients.FirstOrDefaultAsync(p => p.Ssn == ssn);
+    }
+    
     public async Task<bool> IsPatientAsync(string ssn)
     {
         // Monitoring and Logging
