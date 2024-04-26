@@ -12,12 +12,14 @@ namespace MS_Application;
 public class MeasurementService : IMeasurementService
 {
     private readonly IMeasurementRepository _repo;
+    private readonly IPatientCheck _patientCheck;
     private readonly IMapper _mapper;
     private readonly IValidator<Measurement> _validator;
     
-    public MeasurementService(IMeasurementRepository repo, IMapper mapper, IValidator<Measurement> validator)
+    public MeasurementService(IMeasurementRepository repo, IPatientCheck patientCheck, IMapper mapper, IValidator<Measurement> validator)
     {
         _repo = repo ?? throw new NullReferenceException("MeasurementService repository is null");
+        _patientCheck = patientCheck ?? throw new NullReferenceException("MeasurementService patientCheck is null");
         _mapper = mapper ?? throw new NullReferenceException("MeasurementService mapper is null");
         _validator = validator ?? throw new NullReferenceException("MeasurementService validator is null");
     }
@@ -32,6 +34,14 @@ public class MeasurementService : IMeasurementService
         {
             Monitoring.Log.Error("MeasurementCreate is null");
             throw new NullReferenceException("MeasurementCreate is null");
+        }
+        
+        Monitoring.Log.Debug($"Checking if Patient with SSN {request.PatientSSN} exists");
+        var patientExists = await _patientCheck.CheckPatientExistsAsync(request.PatientSSN);
+        if (!patientExists)
+        {
+            Monitoring.Log.Error($"Patient with SSN {request.PatientSSN} does not exist");
+            throw new ArgumentException($"Patient with SSN {request.PatientSSN} does not exist");
         }
         
         var measurement = _mapper.Map<Measurement>(request);

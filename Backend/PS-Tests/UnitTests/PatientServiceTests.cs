@@ -27,6 +27,15 @@ public class PatientServiceTests
     }
 
     [Fact]
+    public void CreateService_WithNullPatientCheck_ShouldThrowNullExceptionWithMessage()
+    {
+        Action action = () =>
+            new PatientService(new Mock<IPatientRepository>().Object, null, new Mock<IMapper>().Object, new Mock<IValidator<Patient>>().Object);
+
+        action.Should().Throw<NullReferenceException>().WithMessage("PatientService measurements is null");
+    }
+    
+    [Fact]
     public void CreateService_WithNullAutoMapper_ShouldThrowNullExceptionWithMessage()
     {
         Action action = () =>
