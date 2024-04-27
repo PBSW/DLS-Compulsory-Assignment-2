@@ -28,6 +28,18 @@ await config.Init();
 
 builder.Services.AddSingleton<IFeatureHubConfig>(config);
 
+builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(name: "AllowedCorsOrigins",
+                builder =>
+                {
+                    builder
+                        .SetIsOriginAllowed(x => true)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+        });
 
 //Database
 builder.Services.AddDbContext<DatabaseContext>(options => options.UseMySql(
@@ -49,6 +61,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowedCorsOrigins");
 
 app.MapControllers();
 
