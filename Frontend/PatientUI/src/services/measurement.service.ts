@@ -4,25 +4,25 @@ import { Measurement } from '../domain/measurement';
 import { catchError, map, Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MeasurementService {
-
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   postMeasurement(measurement: Measurement): Observable<boolean> {
-    return this.http.post<HttpResponse<any>>('/measurements', measurement)
-    .pipe(
+    const body = {
+      patientSSN: measurement.cvr,
+      diastolic: measurement.diastolic,
+      systolic: measurement.systolic,
+    };
+
+    return this.http.post<HttpResponse<any>>('/measurement', body).pipe(
       map((response) => {
-      if (response.ok) {
-        return true;
-      }
-      else return false;
-    }))
+        console.log(response);
+        if (response.ok) {
+          return true;
+        } else return false;
+      })
+    );
   }
-
-  validateCvr(cvr: string) {
-    return this.http.get(`/cvr/${cvr}`);
-  }
-
 }

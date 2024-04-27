@@ -1,7 +1,7 @@
 ﻿{
   "Routes": [
     {
-      "UpstreamPathTemplate": "/measurement",
+      "UpstreamPathTemplate": "/api/measurement",
       "UpstreamHttpMethod": [
         "Post",
         "Get",
@@ -18,7 +18,21 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/patient",
+      "UpstreamPathTemplate": "/api/measurement/{ssn}",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "DownstreamPathTemplate": "/api/measurement/{ssn}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "patient-service",
+          "Port": 8080
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/patient",
       "UpstreamHttpMethod": [
         "Post",
         "Get",
@@ -26,6 +40,34 @@
         "OPTIONS"
       ],
       "DownstreamPathTemplate": "/api/patient",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "patient-service",
+          "Port": 8080
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/patient/{ssn}",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "DownstreamPathTemplate": "/api/patient/{ssn}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "patient-service",
+          "Port": 8080
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/patient/check/{ssn}",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "DownstreamPathTemplate": "/api/patient/check/{ssn}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {

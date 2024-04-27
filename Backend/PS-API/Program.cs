@@ -15,6 +15,19 @@ builder.Services.AddSwaggerGen();
 // auto-mapper crashes due to external assemblies not being compiled with the exact same dotnet version 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.GetName().Name?.Contains("FeatureHubSDK") ?? true));
 builder.Services.AddControllers();
+builder.Services.AddCors(
+    options =>
+    {
+        options.AddDefaultPolicy(
+            builder =>
+            {
+                builder.AllowAnyOrigin();
+                builder.AllowAnyMethod();
+                builder.AllowAnyHeader();
+            }
+        );
+    }
+);
 
 
 var featurehub = builder.Configuration.GetSection("FeatureHub");
@@ -43,7 +56,8 @@ builder.Services.AddCors(options =>
 
 //Database
 builder.Services.AddDbContext<DatabaseContext>(options => options.UseMySql(
-    builder.Configuration.GetConnectionString("DefaultConnection"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
+    builder.Configuration.GetConnectionString("DefaultConnection"),
+    ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
 ));
 
 // Dependency Resolvers
@@ -62,7 +76,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowedCorsOrigins");
+app.UseCors(
+    policyBuilder =>
+    {
+        policyBuilder.AllowAnyOrigin();
+        policyBuilder.AllowAnyMethod();
+        policyBuilder.AllowAnyHeader();
+    }
+);
 
 app.MapControllers();
 

@@ -35,6 +35,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(
+    policyBuilder =>
+    {
+        policyBuilder.AllowAnyOrigin();
+        policyBuilder.AllowAnyMethod();
+        policyBuilder.AllowAnyHeader();
+    }
+);
+
 app.UseOcelot().Wait();
 
 app.UseCors("AllowedCorsOrigins");

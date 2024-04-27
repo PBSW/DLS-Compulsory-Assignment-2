@@ -1,46 +1,65 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Patient } from '../core/domain/domain';
-import { Observable, of } from 'rxjs';
+import { Measurement, Patient } from '../core/domain/domain';
+import { map, Observable, of } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PatientService {
-
-  constructor(private http: HttpClient) { }
-
+  constructor(private http: HttpClient) {}
 
   getPatients() {
-    return this.http.get<Patient[]>('/patients');
+    return this.http.get<Patient[]>('/patient');
   }
 
   getPatient(ssn: string) {
-    return this.http.get<Patient>(`/patients/${ssn}`);
+    return this.http.get<Patient>(`/patient/${ssn}`);
   }
 
   addPatient(patient: Patient) {
-    return of(patient);
-    return this.http.post<Patient>('/patients', patient);
-  }
 
-  updatePatient(patient: Patient) {
-    return this.http.put<Patient>(`/patients/${patient.ssn}`, patient);
+    if (patient.ssn.includes('-')) {
+      patient.ssn = patient.ssn.replace('-', '');
+    }
+
+    const body = {
+      ssn: patient.ssn,
+      name: patient.name,
+      mail: patient.mail,
+    };
+
+    return this.http.post<Patient>('/patient', body);
   }
 
   deletePatient(ssn: string) {
-    return of(true);
-    return this.http.delete(`/patients/${ssn}`);
-    //TODO: Implement this
+    const body = {
+      ssn: ssn,
+    };
+    return this.http.delete<boolean>(`/patient`, { body: body });
   }
 
-  getPatientMeasurements(ssn: string) {
-    return this.http.get(`/patients/${ssn}/measurements`);
+  getPatientMeasurements(ssn: string): Observable<Measurement[]> {
+    return this.http.get<Measurement[]>(`/measurement/${ssn}`);
   }
 
-  markMeasurementAsSeen(ssn: string, measurementId: number): Observable<boolean> {
-    return of(true)
-    this.http.put(`/patients/${ssn}/measurements/${measurementId}/seen`, null);
+  markMeasurementAsSeen(measurement: Measurement): Observable<boolean> {
+    const body = {
+      id: measurement.id,
+      patientSSN: measurement.patientSSN,
+      systolic: measurement.systolic,
+      diastolic: measurement.diastolic,
+      date: measurement.date,
+      seen: true,
+    };
+    return this.http.put<Measurement>(`/measurement`, body).pipe(
+      map((response) => {
+        console.log(response);
+        if (response) {
+          return true;
+        }
+        else return false;
+      })
+    );
   }
-
 }

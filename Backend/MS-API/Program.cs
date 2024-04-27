@@ -42,6 +42,21 @@ builder.Services.AddScoped<IPatientCheck, PatientCheck>();
 
 builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
 
+builder.Services.AddCors(
+    options =>
+    {
+        options.AddDefaultPolicy(
+            builder =>
+            {
+                builder.AllowAnyOrigin();
+                builder.AllowAnyMethod();
+                builder.AllowAnyHeader();
+            }
+        );
+    }
+);
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -51,7 +66,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowedCorsOrigins");
+app.UseCors(
+    policyBuilder =>
+    {
+        policyBuilder.AllowAnyOrigin();
+        policyBuilder.AllowAnyMethod();
+        policyBuilder.AllowAnyHeader();
+    }
+);
 
 app.MapControllers();
 

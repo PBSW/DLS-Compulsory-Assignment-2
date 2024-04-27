@@ -35,73 +35,14 @@ export class PatientViewComponent {
 
   viewingPatient: Patient | null = null;
 
-  patientCollection: Patient[] = [
-    {
-      mail: 'mail1@mail.com',
-      measurements: [
-        { date: new Date(), seen: false, diastolic: 60, systolic: 100, id: 0 },
-        { date: new Date(), seen: false, diastolic: 80, systolic: 120, id: 1 },
-        { date: new Date(), seen: true, diastolic: 90, systolic: 130, id: 2 },
-        { date: new Date(), seen: false, diastolic: 100, systolic: 140, id: 3 },
-      ],
-      name: 'John Doe',
-      ssn: '160499-1234',
-    },
-    {
-      mail: 'mail2@mail.com',
-      measurements: [],
-      name: 'Jane Doe',
-      ssn: '311098-1234',
-    },
-    {
-      mail: 'mail1@mail.com',
-      measurements: [],
-      name: 'John Doe',
-      ssn: '160499-1234',
-    },
-    {
-      mail: 'mail2@mail.com',
-      measurements: [],
-      name: 'Jane Doe',
-      ssn: '311098-1234',
-    },
-    {
-      mail: 'mail1@mail.com',
-      measurements: [],
-      name: 'John Doe',
-      ssn: '160499-1234',
-    },
-    {
-      mail: 'mail2@mail.com',
-      measurements: [],
-      name: 'Jane Doe',
-      ssn: '311098-1234',
-    },
-    {
-      mail: 'mail1@mail.com',
-      measurements: [],
-      name: 'John Doe',
-      ssn: '160499-1234',
-    },
-    {
-      mail: 'mail2@mail.com',
-      measurements: [],
-      name: 'Jane Doe',
-      ssn: '311098-1234',
-    },
-    {
-      mail: 'mail1@mail.com',
-      measurements: [],
-      name: 'John Doe',
-      ssn: '160499-1234',
-    },
-    {
-      mail: 'mail2@mail.com',
-      measurements: [],
-      name: 'Jane Doe',
-      ssn: '311098-1234',
-    },
-  ];
+  patientCollection: Patient[] = [];
+
+  constructor() {
+    this.patientService.getPatients().subscribe((patients) => {
+      console.log(patients);
+      this.patientCollection = patients;
+    });
+  }
 
   calcAge(ssn: string): number {
     return calcAge(ssn);
@@ -136,6 +77,7 @@ export class PatientViewComponent {
       }
       this.patientService.addPatient(newPatient).subscribe(
         (response) => {
+          console.log(response);
           this.patientCollection.push(response);
         },
       );
@@ -145,6 +87,7 @@ export class PatientViewComponent {
   onPatientDeleted(patient: Patient) {
     this.patientService.deletePatient(patient.ssn).subscribe((reponse) => {
       if (reponse) {
+        console.log(reponse);
         this.patientCollection = this.patientCollection.filter(
           (p) => p !== patient
         );

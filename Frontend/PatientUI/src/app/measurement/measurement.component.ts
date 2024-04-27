@@ -55,7 +55,7 @@ export class MeasurementComponent implements OnInit {
   get measurement(): Measurement {
     const values = this.form.value;
     return {
-      cvr: values.cvr1 + '-' + values.cvr2,
+      cvr: values.cvr1 + values.cvr2 + '',
       systolic: values.systolic,
       diastolic: values.diastolic,
     };
