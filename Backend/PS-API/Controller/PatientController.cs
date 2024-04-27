@@ -31,7 +31,7 @@ public class PatientController : ControllerBase
         {
             var ctx = _featureHub.NewContext();
 
-            if (ctx.IsEnabled("patient_post")) 
+            if (ctx.IsSet("patient_post")) 
             {
                 return Ok(await _service.CreatePatientAsync(request));
             }
@@ -115,7 +115,7 @@ public class PatientController : ControllerBase
         {
             var ctx = _featureHub.NewContext();
 
-            if (ctx.IsEnabled("patient_delete")) 
+            if (ctx.IsSet("patient_delete")) 
             {
                 return Ok(await _service.DeletePatientAsync(request));
             }
