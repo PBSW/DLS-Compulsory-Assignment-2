@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { MeasurementService } from '../../services/measurement.service';
 import { take, pipe } from 'rxjs';
 import { ToastService } from '../../services/toasts/toast.service';
+import { FeatureHub, StrategyAttributeCountryName } from 'featurehub-javascript-client-sdk';
 
 @Component({
   selector: 'app-measurement',
@@ -21,16 +22,25 @@ import { ToastService } from '../../services/toasts/toast.service';
 })
 export class MeasurementComponent implements OnInit {
   form: FormGroup = new FormGroup({});
-  active: number = 1;
+  isInAllowedCountry = false;
 
   constructor(
     private measurementService: MeasurementService,
     private toasts: ToastService
   ) {
     this._createFormGroup();
+    this.isDenmarkOnlyEnabledInFeatureFlag();
   }
 
   ngOnInit() {}
+
+  async isDenmarkOnlyEnabledInFeatureFlag() {
+    FeatureHub.feature('dk_only').addListener((featureState) => {
+      if (featureState != null) {
+        this.isInAllowedCountry = featureState.enabled;
+      }
+    });
+  }
 
   resetForm() {
     this.form.reset();
