@@ -1,13 +1,13 @@
 ﻿{
   "Routes": [
     {
-      "UpstreamPathTemplate": "api/measurement",
+      "UpstreamPathTemplate": "/api/measurement",
       "UpstreamHttpMethod": [
         "Post",
         "Get",
         "Put"
       ],
-      "DownstreamPathTemplate": "api/measurement",
+      "DownstreamPathTemplate": "/api/measurement",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -17,11 +17,11 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "api/measurement/{ssn}",
+      "UpstreamPathTemplate": "/api/measurement/{ssn}",
       "UpstreamHttpMethod": [
         "Get"
       ],
-      "DownstreamPathTemplate": "api/measurement/{ssn}",
+      "DownstreamPathTemplate": "/api/measurement/{ssn}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -31,13 +31,13 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "api/patient",
+      "UpstreamPathTemplate": "/api/patient",
       "UpstreamHttpMethod": [
         "Post",
         "Get",
         "Delete"
       ],
-      "DownstreamPathTemplate": "api/patient",
+      "DownstreamPathTemplate": "/api/patient",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -47,11 +47,11 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "api/patient/{ssn}",
+      "UpstreamPathTemplate": "/api/patient/{ssn}",
       "UpstreamHttpMethod": [
         "Get"
       ],
-      "DownstreamPathTemplate": "api/patient/{ssn}",
+      "DownstreamPathTemplate": "/api/patient/{ssn}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -61,11 +61,11 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "api/patient/check/{ssn}",
+      "UpstreamPathTemplate": "/api/patient/check/{ssn}",
       "UpstreamHttpMethod": [
         "Get"
       ],
-      "DownstreamPathTemplate": "api/patient/check/{ssn}",
+      "DownstreamPathTemplate": "/api/patient/check/{ssn}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
