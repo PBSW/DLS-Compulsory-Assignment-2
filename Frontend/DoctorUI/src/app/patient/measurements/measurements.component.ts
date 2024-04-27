@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { Measurement, MeasurementGrade, Patient } from '../../core/domain/domain';
 import { calcAge } from '../../core/helpers/age-calc';
 import { CommonModule } from '@angular/common';
@@ -14,7 +14,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   templateUrl: './measurements.component.html',
   styleUrl: './measurements.component.scss'
 })
-export class MeasurementsComponent {
+export class MeasurementsComponent implements OnChanges {
 
   @Input() patient: Patient | null = null;
   @Output() deletePatientEvent = new EventEmitter<Patient>();
@@ -23,14 +23,34 @@ export class MeasurementsComponent {
   constructor(
     private patientService: PatientService,
     private sanitizer: DomSanitizer
-  ) { }
+  ) {
+
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['patient']) {
+
+
+      if (this.patient) {
+        this.patientService.getPatientMeasurements(this.patient.ssn).subscribe((measurements) => {
+          console.log(measurements);
+          console.log(this.patient);
+          this.patient!.measurements = measurements;
+        });
+      }
+    }
+  }
 
 
 
   markAsSeen(measurement: Measurement) {
-    this.patientService.markMeasurementAsSeen(measurement);
-    //TODO: Implement this
-    measurement.seen = true;
+    this.patientService.markMeasurementAsSeen(measurement).subscribe(
+      (response) => {
+        if (response) {
+          measurement.seen = true;
+        }
+      }
+    );
   }
 
   calcAge(ssn: string | undefined): number {

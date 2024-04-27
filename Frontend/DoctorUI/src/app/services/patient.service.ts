@@ -1,15 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Measurement, Patient } from '../core/domain/domain';
-import { Observable, of } from 'rxjs';
+import { map, Observable, of } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PatientService {
-
-  constructor(private http: HttpClient) { }
-
+  constructor(private http: HttpClient) {}
 
   getPatients() {
     return this.http.get<Patient[]>('/patient');
@@ -24,31 +22,34 @@ export class PatientService {
       ssn: patient.ssn,
       name: patient.name,
       mail: patient.mail,
-    }
-    return of(patient);
+    };
+
     return this.http.post<Patient>('/patient', body);
   }
 
   deletePatient(ssn: string) {
     const body = {
-      ssn: ssn
-    }
-    return of(true);
-    return this.http.delete(`/patient`, {body : body});
-    //TODO: Implement this
+      ssn: ssn,
+    };
+    return this.http.delete<boolean>(`/patient`, { body: body });
   }
 
-  getPatientMeasurements(ssn: string) {
-    return this.http.get(`/measurement/${ssn}`);
+  getPatientMeasurements(ssn: string): Observable<Measurement[]> {
+    return this.http.get<Measurement[]>(`/measurement/${ssn}`);
   }
 
   markMeasurementAsSeen(measurement: Measurement): Observable<boolean> {
     const body = {
       seen: true,
-    }
-
-    return of(true)
-    this.http.put(`/measurement`, body);
+    };
+    return this.http.put<Measurement>(`/measurement`, body).pipe(
+      map((response) => {
+        console.log(response);
+        if (response) {
+          return true;
+        }
+        else return false;
+      })
+    );
   }
-
 }
