@@ -10,6 +10,7 @@ import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { PatientCreateModalComponent } from './patient-create-modal/patient-create-modal.component';
 import { DomSanitizer } from '@angular/platform-browser';
 import { PatientService } from '../services/patient.service';
+import { FeatureHub } from 'featurehub-javascript-client-sdk';
 
 @Component({
   selector: 'app-patient-view',
@@ -32,9 +33,9 @@ export class PatientViewComponent {
   private modalService = inject(NgbModal);
   private sanitizer = inject(DomSanitizer);
   private patientService = inject(PatientService);
+  patientCreateAllowed: boolean = true;
 
   viewingPatient: Patient | null = null;
-
   patientCollection: Patient[] = [];
 
   constructor() {
@@ -42,6 +43,7 @@ export class PatientViewComponent {
       console.log(patients);
       this.patientCollection = patients;
     });
+    this.isPatientCreateDisabled();
   }
 
   calcAge(ssn: string): number {
@@ -63,6 +65,14 @@ export class PatientViewComponent {
   hasNewMeasurements(patient: Patient): boolean {
     return patient.measurements.some((measurement) => {
       return !measurement.seen;
+    });
+  }
+
+  isPatientCreateDisabled() {
+    FeatureHub.feature('patient-create')
+    .addListener((featureState) => {
+      const state = featureState.enabled;
+      this.patientCreateAllowed = state;
     });
   }
 

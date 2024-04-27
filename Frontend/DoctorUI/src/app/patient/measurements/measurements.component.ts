@@ -6,6 +6,7 @@ import { PatientService } from '../../services/patient.service';
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { PatientDeleteModalComponent } from '../patient-delete-modal/patient-delete-modal.component';
 import { DomSanitizer } from '@angular/platform-browser';
+import { FeatureHub } from 'featurehub-javascript-client-sdk';
 
 @Component({
   selector: 'app-measurements',
@@ -19,12 +20,13 @@ export class MeasurementsComponent implements OnChanges {
   @Input() patient: Patient | null = null;
   @Output() deletePatientEvent = new EventEmitter<Patient>();
   private modalService = inject(NgbModal);
+  deletePatientAllowed: boolean = true;
 
   constructor(
     private patientService: PatientService,
     private sanitizer: DomSanitizer
   ) {
-
+    this.isDeletePatientAllowed();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -41,7 +43,11 @@ export class MeasurementsComponent implements OnChanges {
     }
   }
 
-
+  isDeletePatientAllowed() {
+    FeatureHub.feature('patient_delete').addListener((feature) => {
+      this.deletePatientAllowed = feature.enabled;
+    });
+  }
 
   markAsSeen(measurement: Measurement) {
     this.patientService.markMeasurementAsSeen(measurement).subscribe(

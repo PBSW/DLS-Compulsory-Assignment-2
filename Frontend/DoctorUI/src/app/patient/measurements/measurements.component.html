@@ -11,6 +11,7 @@
       >
         <div class="d-flex flex-column justify-content-start">
           <button
+            [disabled]="!deletePatientAllowed"
             class="btn btn-outline-danger"
             (click)="openDeleteModal(patient)"
           >
