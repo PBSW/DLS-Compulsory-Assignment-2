@@ -20,6 +20,9 @@ public class PatientMeasurements : IPatientMeasurements
         var request = new RestRequest($"/api/measurement/{ssn}", Method.Get);
         request.AddHeader("Content-Type", "application/json");
         
+        // Propagate the trace context
+        PropagationHelper.Inject(request, activity);
+        
         // Execute HTTP request and await the result
         var response = await client.ExecuteAsync<List<MeasurementResponse>>(request);
 
