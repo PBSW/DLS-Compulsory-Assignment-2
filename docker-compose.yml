@@ -9,7 +9,9 @@ services:
         image: philipezadeh/dls-assignment-2-gateway
         ports:
             - "8081:8080"
-    
+        depends_on:
+            - featurehub
+
     patient-service:
         container_name: dls-2-patient-service
         build:
@@ -110,7 +112,17 @@ services:
         image: openzipkin/zipkin-mysql
         volumes:
             - zipkin_data:/mysql/data
-              
+
+    featurehub:
+        image: featurehub/party-server:latest
+        volumes:
+        - ./.docker/featurehub-db/:/db:rw
+        - ./.docker/app-config:/etc/app-config
+        - ./.docker/common-config:/etc/common-config
+        ports:
+        - 8085:8085
+        - 8701:8701
+
 volumes:
     patient_db:
     measurement_db:

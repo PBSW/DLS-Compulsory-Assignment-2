@@ -12,6 +12,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(name: "AllowedCorsOrigins",
+                builder =>
+                {
+                    builder
+                        .SetIsOriginAllowed(x => true)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+        });
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -23,8 +37,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseOcelot().Wait();
 
+app.UseCors("AllowedCorsOrigins");
 app.MapControllers();
-
 
 app.Run();
 

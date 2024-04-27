@@ -5,9 +5,10 @@
       "UpstreamHttpMethod": [
         "Post",
         "Get",
-        "Put"
+        "Put",
+        "OPTIONS"
       ],
-      "DownstreamPathTemplate": "/measurement",
+      "DownstreamPathTemplate": "/api/measurement",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -21,13 +22,14 @@
       "UpstreamHttpMethod": [
         "Post",
         "Get",
-        "Delete"
+        "Delete",
+        "OPTIONS"
       ],
-      "DownstreamPathTemplate": "/patient",
+      "DownstreamPathTemplate": "/api/patient",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "measurement-service",
+          "Host": "patient-service",
           "Port": 8080
         }
       ]

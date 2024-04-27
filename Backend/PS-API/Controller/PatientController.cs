@@ -1,5 +1,6 @@
-﻿using System.Diagnostics;
+using FeatureHubSDK;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using OpenTelemetry;
 using OpenTelemetry.Context.Propagation;
 using PS_Application.Interfaces;
@@ -13,10 +14,12 @@ namespace PS_API.Controller;
 public class PatientController : ControllerBase
 {
     private readonly IPatientService _service;
+    private readonly IFeatureHubConfig _featureHub;
 
-    public PatientController(IPatientService service)
+    public PatientController(IPatientService service, IFeatureHubConfig featureHub)
     {
         _service = service;
+        _featureHub = featureHub;
     }
     
     [HttpPost]
@@ -29,7 +32,14 @@ public class PatientController : ControllerBase
 
         try
         {
-            return Ok(await _service.CreatePatientAsync(request));
+            var ctx = _featureHub.NewContext();
+
+            if (ctx.IsSet("patient_post")) 
+            {
+                return Ok(await _service.CreatePatientAsync(request));
+            }
+
+            return StatusCode(423);
         }
         catch (Exception e)
         {
@@ -104,7 +114,6 @@ public class PatientController : ControllerBase
             Monitoring.Log.Error(e.Message);
             return BadRequest(e.Message);
         }
-
     }
     
     [HttpDelete]
@@ -117,7 +126,14 @@ public class PatientController : ControllerBase
 
         try
         {
-            return Ok(await _service.DeletePatientAsync(request));
+            var ctx = _featureHub.NewContext();
+
+            if (ctx.IsSet("patient_delete")) 
+            {
+                return Ok(await _service.DeletePatientAsync(request));
+            }
+
+            return StatusCode(423);
         }
         catch (Exception e)
         {
