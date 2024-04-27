@@ -27,7 +27,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "measurement-service",
+          "Host": "patient-service",
           "Port": 8080
         }
       ]

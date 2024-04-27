@@ -12,6 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// auto-mapper crashes due to external assemblies not being compiled with the exact same dotnet version 
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.GetName().Name?.Contains("FeatureHubSDK") ?? true));
 builder.Services.AddControllers();
 
 
@@ -22,10 +24,10 @@ FeatureLogging.DebugLogger += (sender, s) => Console.WriteLine("DEBUG: " + s + "
 FeatureLogging.TraceLogger += (sender, s) => Console.WriteLine("TRACE: " + s + "\n");
 FeatureLogging.InfoLogger += (sender, s) => Console.WriteLine("INFO: " + s + "\n");
 FeatureLogging.ErrorLogger += (sender, s) => Console.WriteLine("ERROR: " + s + "\n");
+await config.Init();
 
-builder.Services.Add(ServiceDescriptor.Singleton(typeof(IFeatureHubConfig), config));
+builder.Services.AddSingleton<IFeatureHubConfig>(config);
 
-config.Init();
 
 //Database
 builder.Services.AddDbContext<DatabaseContext>(options => options.UseMySql(
@@ -36,8 +38,6 @@ builder.Services.AddDbContext<DatabaseContext>(options => options.UseMySql(
 builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IPatientMeasurements, PatientMeasurements>();
-
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
 
