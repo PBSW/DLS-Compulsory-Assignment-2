@@ -47,11 +47,11 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "api/patient{ssn}",
+      "UpstreamPathTemplate": "api/patient/{ssn}",
       "UpstreamHttpMethod": [
         "Get"
       ],
-      "DownstreamPathTemplate": "api/patient",
+      "DownstreamPathTemplate": "api/patient/{ssn}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -65,7 +65,7 @@
       "UpstreamHttpMethod": [
         "Get"
       ],
-      "DownstreamPathTemplate": "api/patient",
+      "DownstreamPathTemplate": "api/patient/check/{ssn}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
