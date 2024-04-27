@@ -27,10 +27,10 @@ export class MeasurementsComponent {
 
 
 
-  markAsSeen(measurements: Measurement) {
-    this.patientService.markMeasurementAsSeen(this.patient?.ssn!, measurements.id);
+  markAsSeen(measurement: Measurement) {
+    this.patientService.markMeasurementAsSeen(measurement);
     //TODO: Implement this
-    measurements.seen = true;
+    measurement.seen = true;
   }
 
   calcAge(ssn: string | undefined): number {

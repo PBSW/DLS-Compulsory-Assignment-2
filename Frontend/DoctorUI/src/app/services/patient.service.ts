@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Patient } from '../core/domain/domain';
+import { Measurement, Patient } from '../core/domain/domain';
 import { Observable, of } from 'rxjs';
 
 @Injectable({
@@ -12,35 +12,43 @@ export class PatientService {
 
 
   getPatients() {
-    return this.http.get<Patient[]>('/patients');
+    return this.http.get<Patient[]>('/patient');
   }
 
   getPatient(ssn: string) {
-    return this.http.get<Patient>(`/patients/${ssn}`);
+    return this.http.get<Patient>(`/patient/${ssn}`);
   }
 
   addPatient(patient: Patient) {
+    const body = {
+      ssn: patient.ssn,
+      name: patient.name,
+      mail: patient.mail,
+    }
     return of(patient);
-    return this.http.post<Patient>('/patients', patient);
-  }
-
-  updatePatient(patient: Patient) {
-    return this.http.put<Patient>(`/patients/${patient.ssn}`, patient);
+    return this.http.post<Patient>('/patient', body);
   }
 
   deletePatient(ssn: string) {
+    const body = {
+      ssn: ssn
+    }
     return of(true);
-    return this.http.delete(`/patients/${ssn}`);
+    return this.http.delete(`/patient`, {body : body});
     //TODO: Implement this
   }
 
   getPatientMeasurements(ssn: string) {
-    return this.http.get(`/patients/${ssn}/measurements`);
+    return this.http.get(`/measurement/${ssn}`);
   }
 
-  markMeasurementAsSeen(ssn: string, measurementId: number): Observable<boolean> {
+  markMeasurementAsSeen(measurement: Measurement): Observable<boolean> {
+    const body = {
+      seen: true,
+    }
+
     return of(true)
-    this.http.put(`/patients/${ssn}/measurements/${measurementId}/seen`, null);
+    this.http.put(`/measurement`, body);
   }
 
 }

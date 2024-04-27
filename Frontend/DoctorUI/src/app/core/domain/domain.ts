@@ -11,6 +11,7 @@ export interface Measurement {
   systolic: number;
   diastolic: number;
   seen: boolean;
+  patientSSN: string;
 }
 
 export enum MeasurementGrade {

@@ -39,10 +39,10 @@ export class PatientViewComponent {
     {
       mail: 'mail1@mail.com',
       measurements: [
-        { date: new Date(), seen: false, diastolic: 60, systolic: 100, id: 0 },
-        { date: new Date(), seen: false, diastolic: 80, systolic: 120, id: 1 },
-        { date: new Date(), seen: true, diastolic: 90, systolic: 130, id: 2 },
-        { date: new Date(), seen: false, diastolic: 100, systolic: 140, id: 3 },
+        { date: new Date(), seen: false, diastolic: 60, systolic: 100, id: 0, patientSSN: '160499-1234'},
+        { date: new Date(), seen: false, diastolic: 80, systolic: 120, id: 1, patientSSN: '160499-1234'},
+        { date: new Date(), seen: true, diastolic: 90, systolic: 130, id: 2, patientSSN: '160499-1234'},
+        { date: new Date(), seen: false, diastolic: 100, systolic: 140, id: 3, patientSSN: '160499-1234'},
       ],
       name: 'John Doe',
       ssn: '160499-1234',
