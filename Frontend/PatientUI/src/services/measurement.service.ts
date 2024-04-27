@@ -10,7 +10,13 @@ export class MeasurementService {
   constructor(private http: HttpClient) {}
 
   postMeasurement(measurement: Measurement): Observable<boolean> {
-    return this.http.post<HttpResponse<any>>('/measurement', measurement).pipe(
+    const body = {
+      patientSSN: measurement.cvr,
+      diastolic: measurement.diastolic,
+      systolic: measurement.systolic,
+    };
+
+    return this.http.post<HttpResponse<any>>('/measurement', body).pipe(
       map((response) => {
         console.log(response);
         if (response.ok) {

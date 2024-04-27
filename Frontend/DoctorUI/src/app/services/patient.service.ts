@@ -18,6 +18,11 @@ export class PatientService {
   }
 
   addPatient(patient: Patient) {
+
+    if (patient.ssn.includes('-')) {
+      patient.ssn = patient.ssn.replace('-', '');
+    }
+
     const body = {
       ssn: patient.ssn,
       name: patient.name,
@@ -40,6 +45,11 @@ export class PatientService {
 
   markMeasurementAsSeen(measurement: Measurement): Observable<boolean> {
     const body = {
+      id: measurement.id,
+      patientSSN: measurement.patientSSN,
+      systolic: measurement.systolic,
+      diastolic: measurement.diastolic,
+      date: measurement.date,
       seen: true,
     };
     return this.http.put<Measurement>(`/measurement`, body).pipe(
