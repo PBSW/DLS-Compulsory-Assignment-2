@@ -1,5 +1,8 @@
-﻿using FeatureHubSDK;
+using FeatureHubSDK;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
+using OpenTelemetry;
+using OpenTelemetry.Context.Propagation;
 using PS_Application.Interfaces;
 using Shared.DTOs.Delete;
 using Shared.DTOs.Requests;
@@ -89,9 +92,19 @@ public class PatientController : ControllerBase
     public async Task<IActionResult> IsPatientAsync(string ssn)
     {
         // Monitoring and Logging
-        Monitoring.ActivitySource.StartActivity("IsPatientAsync");
         Monitoring.Log.Debug("Checking if Patient exists");
 
+        var headers = Request.Headers.ToDictionary(h => h.Key, h => h.Value.ToString());
+        var propagator = new TraceContextPropagator();
+        var parrentContext = propagator.Extract(default, headers, (carrier, key) =>
+        {
+            return new List<string>(new[] { headers.ContainsKey(key) ? headers[key].ToString() : String.Empty });
+        });
+
+        Baggage.Current = parrentContext.Baggage;
+        using var activity = Monitoring.ActivitySource.StartActivity("PatientService.API.IsPatientAsynch got message", ActivityKind.Consumer, parrentContext.ActivityContext);
+
+        
         try
         {
             return Ok(await _service.IsPatientAsync(ssn));

@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 using MS_Application.Interfaces;
+using OpenTelemetry;
+using OpenTelemetry.Context.Propagation;
 using Shared.DTOs.Create;
 using Shared.DTOs.Update;
 using Shared.Monitoring;
@@ -57,8 +60,18 @@ public class MeasurementController : ControllerBase
     public async Task<IActionResult> GetPatientMeasurementsBySSNAsync([FromRoute] string ssn)
     {
         // Monitoring and Logging
-        Monitoring.ActivitySource.StartActivity("GetMeasurementByIdAsync");
         Monitoring.Log.Debug("Getting Measurement by SSN");
+        
+        var headers = Request.Headers.ToDictionary(h => h.Key, h => h.Value.ToString());
+        var propagator = new TraceContextPropagator();
+        var parrentContext = propagator.Extract(default, headers, (carrier, key) =>
+        {
+            return new List<string>(new[] { headers.ContainsKey(key) ? headers[key].ToString() : String.Empty });
+        });
+
+        Baggage.Current = parrentContext.Baggage;
+        using var activity = Monitoring.ActivitySource.StartActivity("MeasurementService.API.GetPatientMeasurementsBySSNAsync got message", ActivityKind.Consumer, parrentContext.ActivityContext);
+
         
         try
         {
