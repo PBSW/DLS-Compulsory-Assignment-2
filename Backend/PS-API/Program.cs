@@ -1,4 +1,5 @@
 using FluentValidation;
+using FeatureHubSDK;
 using Microsoft.EntityFrameworkCore;
 using PS_Application;
 using PS_Application.Interfaces;
@@ -12,6 +13,19 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddControllers();
+
+
+var featurehub = builder.Configuration.GetSection("FeatureHub");
+IFeatureHubConfig config = new EdgeFeatureHubConfig(featurehub.GetValue<string>("Host"), featurehub.GetValue<string>("ApiKey"));
+
+FeatureLogging.DebugLogger += (sender, s) => Console.WriteLine("DEBUG: " + s + "\n");
+FeatureLogging.TraceLogger += (sender, s) => Console.WriteLine("TRACE: " + s + "\n");
+FeatureLogging.InfoLogger += (sender, s) => Console.WriteLine("INFO: " + s + "\n");
+FeatureLogging.ErrorLogger += (sender, s) => Console.WriteLine("ERROR: " + s + "\n");
+
+builder.Services.Add(ServiceDescriptor.Singleton(typeof(IFeatureHubConfig), config));
+
+config.Init();
 
 //Database
 builder.Services.AddDbContext<DatabaseContext>(options => options.UseMySql(

@@ -9,7 +9,9 @@ services:
         image: philipezadeh/dls-assignment-2-gateway
         ports:
             - "8081:8080"
-    
+        depends_on:
+            - featurehub
+
     patient-service:
         container_name: dls-2-patient-service
         build:
@@ -120,7 +122,7 @@ services:
         ports:
         - 8085:8085
         - 8701:8701
-              
+
 volumes:
     patient_db:
     measurement_db:
