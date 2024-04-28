@@ -1,0 +1,111 @@
+<div *ngIf="isInAllowedCountry; then measurementForm; else noAccess">
+
+</div>
+
+<ng-template #noAccess>
+  <div class="d-flex justify-content-center">
+    <h1 class="text-danger">You do not have access to this feature</h1>
+    <h2 class="text-danger">This page is only usable in Denmark</h2>
+  </div>
+</ng-template>
+<ng-template #measurementForm>
+  <form [formGroup]="form" class="justify-content-evenly d-flex flex-row">
+    <!-- CVR -->
+    <div>
+    <div
+      class="form-group underlined-input d-flex flex-column m-3 light-text"
+      style="max-width: 165px"
+    >
+      <label class="light-text" for="cvr">CVR</label>
+      <div class="d-flex flex-row align-items-center light-text">
+        <input
+          style="max-width: 85px"
+          type="text"
+          maxlength="6"
+          minlength="6"
+          class="form-control input-field align-text-end light-text"
+          id="cvr1"
+          formControlName="cvr1"
+          placeholder="123456"
+        />
+        <h4 class="m-0 p-0">-</h4>
+        <input
+          style="max-width: 70px"
+          type="text"
+          maxlength="4"
+          minlength="4"
+          class="form-control input-field text-light"
+          id="cvr2"
+          formControlName="cvr2"
+          placeholder="1234"
+        />
+      </div>
+    </div>
+    <!--Errors-->
+    <div *ngIf="form.get('cvr1')?.invalid && form.get('cvr1')?.touched">
+      <small class="text-black fw-bold me-2 ">First six of CPR must be six digits</small>
+    </div>
+    <div *ngIf="form.get('cvr2')?.invalid && form.get('cvr2')?.touched">
+      <small class="text-black fw-bold me-2 ">Last four of CPR must be four digits</small>
+    </div>
+  </div>
+
+
+   <div>
+    <div
+      class="form-group underlined-input d-flex flex-column m-3"
+      style="max-width: 200px"
+    >
+      <label class="light-text" for="measuremnt"
+        >Systolic/Diastolic</label
+      >
+      <div class="d-flex flex-row align-items-center text-light">
+        <input
+          type="number"
+          class="form-control input-field systolic-input align-text-center text-light"
+          id="systolic"
+          formControlName="systolic"
+          placeholder="mm Hg"
+        />
+        <h4 class="m-0 p-0">/</h4>
+        <input
+          type="number"
+          class="form-control input-field diastolic-input align-text-center text-light"
+          id="diastolic"
+          formControlName="diastolic"
+          placeholder="mm Hg"
+        />
+      </div>
+    </div>
+    <!--Errors-->
+    <div *ngIf="form.get('systolic')?.invalid && form.get('systolic')?.touched">
+      <small class="text-black fw-bold ms-2 ">Systolic must be a number</small>
+    </div>
+    <div *ngIf="form.get('diastolic')?.invalid && form.get('diastolic')?.touched">
+      <small class="text-black fw-bold ms-2">Diastolic must be a number</small>
+    </div>
+  </div>
+  </form>
+
+  <!-- Submit button -->
+  <div class="d-flex justify-content-center">
+    <button
+      type="submit"
+      class="btn btn-primary m-3"
+      (click)="submitMeasurement()"
+    >
+      Submit
+    </button>
+
+    <!-- Reset button -->
+    <button
+      type="reset"
+      class="btn btn-secondary m-3"
+      (click)="resetForm()"
+    >
+      Reset
+    </button>
+
+</div>
+
+

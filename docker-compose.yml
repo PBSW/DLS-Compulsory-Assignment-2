@@ -1,0 +1,130 @@
+version: '3.9'
+
+services:
+    gateway:
+        container_name: dls-2-gateway
+        build:
+            context: .
+            dockerfile: Backend/Gateway/Dockerfile
+        image: philipezadeh/dls-assignment-2-gateway
+        ports:
+            - "8081:8080"
+        depends_on:
+            - featurehub
+
+    patient-service:
+        container_name: dls-2-patient-service
+        build:
+            context: .
+            dockerfile: Backend/PS-API/Dockerfile
+        image: philipezadeh/dls-assignment-2-patient-service
+        ports:
+            - "8082:8080"
+        depends_on: 
+            - gateway
+    
+    measurement-service:
+        container_name: dls-2-measurement-service
+        build:
+            context: .
+            dockerfile: Backend/MS-API/Dockerfile
+        image: philipezadeh/dls-assignment-2-measurement-service
+        ports:
+            - "8083:8080"
+        depends_on:
+            - gateway
+    
+    doctor-ui:
+        container_name: dls-2-doctor-ui
+        build:
+            context: Frontend/DoctorUI/
+            dockerfile: Dockerfile
+        environment:
+            - NODE_ENV=production
+        image: philipezadeh/dls-assignment-2-doctor-ui
+        ports:
+            - "4201:4200"
+        command: [ "ng", "serve", "--host", "0.0.0.0" ]
+            
+    
+    patient-ui:
+        container_name: dls-2-patient-ui
+        build:
+            context: Frontend/PatientUI/
+            dockerfile: Dockerfile
+        environment:
+            - NODE_ENV=production
+        image: philipezadeh/dls-assignment-2-patient-ui
+        ports:
+            - "4202:4200"
+        command: [ "ng", "serve", "--host", "0.0.0.0" ]
+    
+    patient-database:
+        container_name: dls-2-patient-db
+        image: mysql:5.7
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: db
+            MYSQL_USER: database_user
+            MYSQL_PASSWORD: Password1!
+        ports:
+            - "3306:3306"
+        volumes:
+            - patient_db:/var/lib/mysql
+        
+    measurement-database:
+        container_name: dls-2-measurement-db
+        image: mysql:5.7
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: db
+            MYSQL_USER: database_user
+            MYSQL_PASSWORD: Password1!
+        ports:
+            - "3307:3306"
+        volumes:
+            - measurement_db:/var/lib/mysql
+    
+    seq:
+        image: datalust/seq
+        ports:
+            - "5341:5341"
+            - "5342:80"
+        volumes:
+            - rps_seq_data:/data
+        environment:
+            - ACCEPT_EULA=Y
+            - SEQ_LISTEN_ADDRESS=0.0.0.0
+    
+    zipkin:
+        image: openzipkin/zipkin
+        ports:
+            - "9411:9411"
+        environment:
+            - STORAGE_TYPE=mysql
+            - MYSQL_HOST=zipkin-storage
+            - MYSQL_USER=zipkin
+            - MYSQL_PASS=zipkin
+        depends_on:
+            - zipkin-storage
+              
+    zipkin-storage:
+        image: openzipkin/zipkin-mysql
+        volumes:
+            - zipkin_data:/mysql/data
+
+    featurehub:
+        image: featurehub/party-server:latest
+        volumes:
+        - ./.docker/featurehub-db/:/db:rw
+        - ./.docker/app-config:/etc/app-config
+        - ./.docker/common-config:/etc/common-config
+        ports:
+        - 8085:8085
+        - 8701:8701
+
+volumes:
+    patient_db:
+    measurement_db:
+    rps_seq_data:
+    zipkin_data:

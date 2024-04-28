@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+    ps:
+      image: mcr.microsoft.com/dotnet/sdk:8.0
+      volumes:
+        - .:/src
+      command: ["/bin/bash", "-c", "/src/Backend/PS-Tests/test-script.sh"]
+    ms:
+      image: mcr.microsoft.com/dotnet/sdk:8.0
+      volumes:
+        - .:/src
+      command: ["/bin/bash", "-c", "/src/Backend/MS-Tests/test-script.sh"]
