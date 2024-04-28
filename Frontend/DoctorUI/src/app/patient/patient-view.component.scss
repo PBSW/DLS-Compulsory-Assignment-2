@@ -1,0 +1,50 @@
+@import "../../theme/theme-variables.scss";
+
+
+.card-custom {
+  background-color: map-get($map: $theme-colors, $key: 'card');
+  border-left: 6px solid darken(map-get($map: $theme-colors, $key: 'primary'), 10%);
+  border-radius: 0.25rem;
+  box-shadow: 0 0 0.5rem 0 rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  width: 300px;
+  transition: all 0.3s;
+}
+
+.card-custom:hover {
+  box-shadow: 0 0 1rem 0 rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+}
+
+.card-custom-viewing {
+  @extend .card-custom;
+  background-color: darken(map-get($map: $theme-colors, $key: 'card'), 10%);
+  border-left: 6px solid map-get($map: $theme-colors, $key: 'secondary');
+}
+
+.card-custom-default {
+  @extend .card-custom;
+  background-color: map-get($map: $theme-colors, $key: 'card');
+  border-left: 6px solid darken(map-get($map: $theme-colors, $key: 'primary'), 10%);
+}
+
+
+.card-body-custom {
+  padding: 0.5rem;
+  color: transparentize($color: map-get($theme-colors, 'dark'), $amount: 0.3);
+}
+
+
+.card-header-custom {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+  padding: 0.25rem;
+  font-weight: 500;
+}
+
+
+.crud-container {
+  background-color: map-get($map: $theme-colors, $key: "card");
+}

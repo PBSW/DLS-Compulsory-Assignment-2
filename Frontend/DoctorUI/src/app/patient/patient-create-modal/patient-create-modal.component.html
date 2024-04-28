@@ -1,0 +1,112 @@
+<div class="modal-header">
+  <span>
+    <h4 class="modal-title">Create patient</h4>
+  </span>
+</div>
+<div class="modal-body">
+  <!-- Create form -->
+  <form [formGroup]="formGroup" (ngSubmit)="create()">
+    <div class="mb-3 d-flex flex-row justify-content-between">
+      <div class="w-50 me-1">
+        <label for="firstname" class="form-label">Firstname</label>
+        <input
+          type="text"
+          class="form-control"
+          id="firstname"
+          formControlName="firstname"
+          required
+        />
+
+        <div
+          *ngIf="
+            formGroup.get('firstname')?.hasError('required') &&
+            formGroup.get('firstname')?.touched
+          "
+          class="text-danger"
+        >
+          Firstname is required
+        </div>
+      </div>
+      <div class="w-50 ms-1 ">
+        <label for="lastname" class="form-label">Lastname</label>
+        <input
+          type="text"
+          class="form-control"
+          id="lastname"
+          formControlName="lastname"
+          required
+        />
+
+        <div
+          *ngIf="
+            formGroup.get('lastname')?.hasError('required') &&
+            formGroup.get('lastname')?.touched
+          "
+          class="text-danger"
+        >
+          Lastname is required
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="ssn" class="form-label">SSN</label>
+      <input
+        type="text"
+        class="form-control"
+        id="ssn"
+        formControlName="ssn"
+        required
+      />
+
+      <div
+        *ngIf="
+          formGroup.get('ssn')?.hasError('pattern') &&
+          formGroup.get('ssn')?.touched
+        "
+        class="text-danger"
+      >
+        SSN is required and must be valid
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input
+        type="email"
+        class="form-control"
+        id="email"
+        formControlName="email"
+        required
+      />
+
+      <div
+        *ngIf="
+          (formGroup.get('email')?.hasError('required') &&
+            formGroup.get('email')?.touched) ||
+          (formGroup.get('email')?.hasError('email') &&
+            formGroup.get('email')?.touched)
+        "
+        class="text-danger"
+      >
+        Email is required
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-outline-dark"
+        (click)="activeModal.close(false)"
+      >
+        Close
+      </button>
+      <button
+        type="submit"
+        class="btn btn-outline-secondary"
+      >
+        Create
+      </button>
+    </div>
+  </form>
+</div>

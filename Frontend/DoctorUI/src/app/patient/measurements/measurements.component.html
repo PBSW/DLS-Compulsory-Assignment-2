@@ -1,0 +1,133 @@
+<div
+  class="container-fluid h-100"
+  style="min-width: 600px"
+  *ngIf="patient !== null; else NO_PATIENT"
+>
+  <div class="d-flex flex-column h-100">
+    <!-- Patient card -->
+    <div class="card w-100 p-2 bg-body-tertiary rounded-2 my-3">
+      <div
+        class="card-header d-flex flex-row-reverse justify-content-between bg-body-tertiary rounded-2 border-0"
+      >
+        <div class="d-flex flex-column justify-content-start">
+          <button
+            [disabled]="!deletePatientAllowed"
+            class="btn btn-outline-danger"
+            (click)="openDeleteModal(patient)"
+          >
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+        <div>
+          <h4 class="m-1">{{ patient.name }}</h4>
+          <h6 class="p-0 m-1 text-muted">SSN: {{ patient.ssn }}</h6>
+
+          <h6 class="p-0 m-1 text-muted">Age: {{ calcAge(patient.ssn) }}</h6>
+
+          <span class="p-0 m-1 h6 text-muted">
+            <i class="fa-solid fa-envelope me-1"></i>
+            <a
+              class="h6"
+              [href]="getSafeUrl('mailto:' + patient.mail)"
+              >{{ patient.mail }}</a
+            >
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Measurements list -->
+
+    <div class="card w-100 p-0 bg-body-tertiary rounded-2 h-100">
+      <div
+        class="card-header p-1 d-flex flex-row justify-content-between bg-secondary-subtle"
+      >
+        <h5 class="m-1">Measurements</h5>
+        <h6 class="m-1 mt-2 fw-bold text-muted">Systolic/Diastolic</h6>
+      </div>
+
+      <div class="card-body p-1 d-flex flex-column justify-content-between">
+        <div class="overflow-y-auto">
+          <div
+            class="list-group list-group-flush w-100"
+            *ngFor="let measurement of patient.measurements"
+          >
+            <a
+              class="list-group-item list-group-item-action my-2 p-2"
+              [ngClass]="{
+                'list-group-item-primary': true
+              }"
+            >
+              <div
+                class="d-flex flex-row justify-content-between align-items-center p-2"
+              >
+                <ng-container [ngSwitch]="gradeMeasurement(measurement)">
+                  <ng-container *ngSwitchCase="EMeasurementGrade.NORMAL">
+                    <i class="fas fa-check-circle normal-color" [ngbTooltip]="NORMAL_TOOLTIP"></i>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="EMeasurementGrade.WARNING" >
+                    <i class="fas fa-exclamation-circle warning-color" [ngbTooltip]="WARNING_TOOLTIP"></i>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="EMeasurementGrade.DANGER" >
+                    <i class="fas fa-times-circle danger-color" [ngbTooltip]="DANGER_TOOLTIP"></i>
+                  </ng-container>
+                </ng-container>
+                <div class="d-flex flex-column justify-content-center align-items-center ">
+                  <h6 class="m-0">
+                    {{ measurement.date | date : "shortDate" }}
+                  </h6>
+                  <small class="m-0 text-muted">
+                    ({{ measurement.date | date : "H:mm" }})
+                  </small>
+                </div>
+                <h6 class="m-0">
+                  {{ measurement.systolic }}/{{ measurement.diastolic }} mmHg
+                </h6>
+                <button
+                  [disabled]="measurement.seen !== false"
+                  (click)="markAsSeen(measurement)"
+                  class="btn btn-transparent seen-button d-flex flex-row-reverse"
+                >
+                  <i class="fas fa-dot-circle text-warning ms-2"></i>
+                  <h6 class="m-0 text-muted small me-2">Mark as seen</h6>
+                </button>
+              </div>
+            </a>
+          </div>
+          <!--Total-->
+        </div>
+        <div class="d-flex flex-row justify-content-between p-3">
+          <h6 class="m-0 text-muted">Average: {{ averageMeasurement() }}</h6>
+
+          <div class="d-inline-flex">
+            <h6 class="m-0 me-2 text-muted">Total</h6>
+            <h6 class="m-0 text-muted">{{ patient.measurements.length }}</h6>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #NO_PATIENT>
+  <div class="container-fluid" style="min-width: 600px">
+    <div
+      class="d-flex flex-column justify-content-center align-items-center h-100"
+    >
+      <h1 class="text-muted">No patient selected</h1>
+      <p class="text-muted">Please select a patient from the list</p>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #NORMAL_TOOLTIP>
+  This measurement is within the normal range
+</ng-template>
+
+<ng-template #WARNING_TOOLTIP>
+  This measurement is within the warning range
+</ng-template>
+
+<ng-template #DANGER_TOOLTIP>
+  This measurement is within the critical range
+</ng-template>

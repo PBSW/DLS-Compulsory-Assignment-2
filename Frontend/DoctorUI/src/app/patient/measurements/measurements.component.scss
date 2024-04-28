@@ -1,0 +1,51 @@
+@use "../../../theme/theme-variables.scss";
+
+.seen-button {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  transition: all 0.3s ease !important;
+}
+
+.seen-button > h6 {
+  opacity: 0% !important;
+}
+
+.seen-button:hover > h6 {
+  opacity: 100% !important;
+}
+
+.seen-button:active > h6 {
+  opacity: 100% !important;
+}
+
+.seen-button:disabled {
+  opacity: 0;
+}
+
+.seen-button:hover {
+  background-color: map-get($map: theme-variables.$theme-colors, $key: "warning") !important;
+}
+
+.seen-button:active {
+  background-color: map-get($map: theme-variables.$theme-colors, $key: "success") !important;
+}
+
+.seen-button:hover > i {
+  color: map-get($map: theme-variables.$theme-colors, $key: "dark") !important;
+}
+
+.seen-button:active > i {
+  color: map-get($map: theme-variables.$theme-colors, $key: "dark") !important;
+}
+
+.normal-color {
+  color: map-get($map: theme-variables.$grade-colors, $key: "normal") !important;
+}
+
+.warning-color {
+  color: map-get($map: theme-variables.$grade-colors, $key: "warning") !important;
+}
+
+.danger-color {
+  color: map-get($map: theme-variables.$grade-colors, $key: "danger") !important;
+}
