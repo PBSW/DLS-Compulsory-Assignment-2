@@ -12,6 +12,7 @@ import { MeasurementService } from '../../services/measurement.service';
 import { take, pipe } from 'rxjs';
 import { ToastService } from '../../services/toasts/toast.service';
 import { FeatureHub, StrategyAttributeCountryName } from 'featurehub-javascript-client-sdk';
+import { getCountry } from '../util/country-finder';
 
 @Component({
   selector: 'app-measurement',
@@ -22,7 +23,7 @@ import { FeatureHub, StrategyAttributeCountryName } from 'featurehub-javascript-
 })
 export class MeasurementComponent implements OnInit {
   form: FormGroup = new FormGroup({});
-  isInAllowedCountry = false;
+  isInAllowedCountry = true;
 
   constructor(
     private measurementService: MeasurementService,
@@ -32,14 +33,42 @@ export class MeasurementComponent implements OnInit {
     this.isDenmarkOnlyEnabledInFeatureFlag();
   }
 
-  ngOnInit() {}
+  async ngOnInit() {
+    await this.isDenmarkOnlyEnabledInFeatureFlag();
+    await this.isInAllowedCountryFlag();
+  }
 
   async isDenmarkOnlyEnabledInFeatureFlag() {
     FeatureHub.feature('dk_only').addListener((featureState) => {
       if (featureState != null) {
-        this.isInAllowedCountry = featureState.enabled;
+
+        const dkOnly = featureState.getFlag();
+        console.log('dkOnly', dkOnly);
+        if (dkOnly) {
+          this.isInAllowedCountry = dkOnly;
+        } else {
+          this.isInAllowedCountry = true; // default to true
+        }
       }
     });
+  }
+
+  async isInAllowedCountryFlag() {
+    const country = await getCountry();
+    const strategyAttributeCountryName = this._findStrategyAttributeCountryName(country.toLowerCase());
+    console.log('strategyAttributeCountryName', strategyAttributeCountryName);
+    const client = FeatureHub.context.country(StrategyAttributeCountryName.Denmark);
+    const dkOnly = await client.feature('dk_only').getFlag();
+    console.log('dkOnly', dkOnly);
+    if (dkOnly) {
+      this.isInAllowedCountry = dkOnly;
+    } else {
+      this.isInAllowedCountry = true; // default to true
+    }
+  }
+
+  private _findStrategyAttributeCountryName(country: string): StrategyAttributeCountryName {
+    return StrategyAttributeCountryName[country as keyof typeof StrategyAttributeCountryName];
   }
 
   resetForm() {
